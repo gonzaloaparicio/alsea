@@ -23,6 +23,14 @@ app.get('/', function (req, res) {
 
 
 app.get('/inicio', function (req, res) {
+	connection.connect();
+
+	connection.query('SELECT * FROM Empleados', function(err, rows, fields) {
+	  if (err) throw err;
+	});
+
+	connection.end();
+
     res.render('alsea');
 });
 
