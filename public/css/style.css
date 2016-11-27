@@ -1,5 +1,14 @@
-body {
+.inicio {
 	background-image: url("http://multipress.com.mx/wp-content/uploads/2014/08/alsea-ok.jpg");
-	background-repeat: no-repeat;
-	background-position-x: 50%;
+	position: absolute;
+	width: 900px;
+	height: 450px;
+	top: 55px;
+	right: 360px;
+}
+
+.btn-inicio {
+	position: fixed;
+	top: 384px;
+	left: 817px;
 }
