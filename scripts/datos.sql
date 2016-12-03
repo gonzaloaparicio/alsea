@@ -207,10 +207,29 @@ INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) V
 
 
 -- CURSOS
-insert into cursos values(1, "Barista", "Curso para capacitación en Barista");
+insert into cursos values(1, 'Orientacion', 'Reune las clases necesarias para darle una orientacion general al nuevo empleado acerca de la empresa');
+insert into cursos values(2, 'Introduccion Starbucks', 'Reune las clases necesarias para darle una orientacion general al nuevo empleado acerca de Starbucks');
+insert into cursos values(3, 'El Café, materia prima', 'Reune las clases necesarias para darle una orientacion general al nuevo empleado acerca de la materia prima que se trabaja en Starbucks, que es el Cafe en todas sus variantes y origenes');
+insert into cursos values(4, 'Relacion con el cliente', 'Reune las clases necesarias para darle una orientacion general al nuevo empleado acerca de la relacion con el cliente.');
+insert into cursos values(5, 'Certificacion Barista', 'Reune las clases necesarias para ser certificado como Barista');
+
 
 -- CLASES
-insert into clases values(1, "Teoria del feca", 1);
-insert into clases values(2, "Oliendo el feca", 1);
-insert into clases values(3, "Preparando el feca", 1);
-insert into clases values(4, "Examen de fecas", 1);
+insert into clases values(1, "Alsea S.A introducción", 1);
+insert into clases values(2, 'Como manejarse dentro de la organización', 1);
+insert into clases values(3, "Licencias en general", 1);
+insert into clases values(4, 'Beneficios!', 1);
+insert into clases values(5, 'Bienvenido a Starbucks!', 2);
+insert into clases values(6, 'La empresa y su visión', 2);
+insert into clases values(7, 'Planes de carrera', 2);
+insert into clases values(8, 'Historia del café', 3);
+insert into clases values(9, 'Geografía del café', 3);
+insert into clases values(10, 'Reconociendo olores', 3);
+insert into clases values(11, 'Principios de preparación', 3);
+insert into clases values(12, 'El cliente, nuestra prioridad', 4);
+insert into clases values(13, 'Formas de referirse al cliente', 4);
+insert into clases values(14, 'Problemas habituales y como accionar', 4);
+insert into clases values(15, 'Como preparar café', 5);
+insert into clases values(16, 'Exámen cerficador', 5);
+
+	

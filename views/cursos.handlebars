@@ -1,1 +1,44 @@
-{{{pepe}}}
+<ul>
+	{{#each cursos}}
+		<li id="{{this.id_curso}}" class="curso">
+		Nombre Curso: {{this.nombre}}
+		Descripción: {{this.nombre}}
+		</li>	
+	{{/each}}
+</ul>
+
+{{#each cursos}}
+	<div class="bs-example curso-hide curso-{{this.id_curso}}" data-example-id="striped-table">
+		Empleados disponibles para el curso {{this.nombre}}
+		<table class="table table-striped">
+			<thead> 
+				<tr> 
+					<th>#</th> 
+					<th>Nombre</th>
+					<th>Apellido</th>
+					<th>Seleccionar</th> 
+				</tr> 
+			</thead> 
+			<tbody>
+				{{#each this.empleados}}
+					<tr> 
+						<th scope="row">{{this.id_empleado}}</th> 
+						<td>{{this.nombre}}</td> 
+						<td>{{this.apellido}}</td> 
+						<td>cuadrito</td> 
+					</tr> 
+				{{/each}}
+			</tbody> 
+		</table>
+	</div>
+{{/each}}
+
+
+<script type="text/javascript">
+
+	$('li.curso').on('click', function(e) {
+		var $this = $(this);
+		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
+	});
+
+</script>

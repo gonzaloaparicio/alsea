@@ -20,7 +20,7 @@ CREATE TABLE certificaciones(
 
 CREATE TABLE cursos(
     id_curso BIGINT NOT NULL PRIMARY KEY,
-    nombre VARCHAR(20) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
     descripcion VARCHAR(200) NOT NULL
 );
 

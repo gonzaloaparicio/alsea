@@ -1,6 +1,8 @@
 var express = require('express');
 var exphbs  = require('express-handlebars');
-var mysql   = require('mysql');
+var db   = require('mysql-promise')();
+//var mysql   = require('mysql');
+var Q       = require('q');
 
 var app = express();
 
@@ -10,12 +12,21 @@ app.set('view engine', 'handlebars');
 app.use("/public", express.static(__dirname + '/public'));
 
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : '',
-  database : 'sip'
+
+db.configure({
+	"host": "localhost",
+	"user": "root",
+	"password": "",
+	"database": "sip"
 });
+
+
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : '',
+//   database : 'sip'
+// });
 
 app.get('/', function (req, res) {
     res.render('bienvenida');
@@ -31,32 +42,26 @@ app.get('/cursos', function (req, res) {
 
 	var cursos = [];
 
-	//buscar los cursos que tengan entrenadores para darlos (join con planes de carrera)
-	//connection.connect();
-	connection.query('SELECT * FROM cursos', function(err, rows, fields) {
-		if (err) throw err;
 
-		rows.forEach(function(curso, index) {
-		  	cursos.push(curso);
+	db.query('SELECT * FROM cursos')
+	.spread((cursos) => {
+
+		var promises = [];
+
+
+	 	cursos.forEach(function(curso, index) {
+			// por cada curso evaluo aquellos que puedan hacer cada curso
+			promises.push(db.query("select * from empleados where id_empleado not in (select id_empleado from planes_de_carrera where id_curso = " + curso.id_curso +") and tipo = 'EMPLEADO'")
+			.spread((empleados) => {
+				return curso.empleados = empleados;
+			}));
 		});
 
-		console.log(cursos);
-
-		res.render('cursos', {pepe: "pepe"});
-
+	 	return Q.all(promises)
+	 	.then(() => res.render('cursos', {cursos: cursos}));
+		
 	});
-	//connection.end();
 
 });
 
 app.listen(3000);
-
-
-
-	// connection.connect();
-
-	// connection.query('SELECT * FROM Empleados', function(err, rows, fields) {
-	//   if (err) throw err;
-	// });
-
-	// connection.end();

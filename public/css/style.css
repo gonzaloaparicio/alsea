@@ -16,3 +16,7 @@
 .alsea .btn-inicio {
 	position: inherit;
 }
+
+.curso-hide {
+	display: none;
+}
