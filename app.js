@@ -26,27 +26,27 @@ app.get('/inicio', function (req, res) {
     res.render('alsea');
 });
 
+
 app.get('/cursos', function (req, res) {
 
 	var cursos = [];
 
 	//buscar los cursos que tengan entrenadores para darlos (join con planes de carrera)
-	connection.connect();
+	//connection.connect();
 	connection.query('SELECT * FROM cursos', function(err, rows, fields) {
 		if (err) throw err;
 
 		rows.forEach(function(curso, index) {
-		  	cursos.push({
-		  		nombre: curso.nombre,
-		  		descripcion: curso.descripcion
-		  	});
+		  	cursos.push(curso);
 		});
 
-	});
-	connection.end();
+		console.log(cursos);
 
-	//compilar primero el html
-    res.render('cursos');
+		res.render('cursos', {pepe: "pepe"});
+
+	});
+	//connection.end();
+
 });
 
 app.listen(3000);
