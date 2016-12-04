@@ -36,7 +36,30 @@
 				{{/each}}
 			</tbody> 
 		</table>
+		<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
 	</div>
+
+	<div class="bs-example clase-hide clase-{{this.id_curso}}" data-example-id="striped-table">
+		Clases disponibles para el curso {{this.nombre}}
+		<table class="table table-striped">
+			<thead> 
+				<tr> 
+					<th>#</th> 
+					<th>Descipción</th>
+				</tr> 
+			</thead> 
+			<tbody>
+				{{#each this.clases}}
+					<tr> 
+						<th scope="row">{{this.id_clase}}</th> 
+						<td>{{this.descripcion}}</td> 
+					</tr> 
+				{{/each}}
+			</tbody> 
+		</table>
+		<button type="button" class="btn btn-primary">Siguiente</button>
+	</div>
+
 {{/each}}
 
 
@@ -86,6 +109,13 @@
 
 			});
 		}
+	});
+
+	$('.curso-sig').on('click', function(e) {
+		var id_curso = $(this).attr('data-curso-id');
+
+		$('div.curso-' + id_curso).hide();
+		$('div.clase-' + id_curso).show();
 	});
 
 </script>

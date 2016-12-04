@@ -52,8 +52,12 @@ app.get('/cursos', function (req, res) {
 	 	cursos.forEach(function(curso, index) {
 			// por cada curso evaluo aquellos que puedan hacer cada curso
 			promises.push(db.query("select * from empleados where id_empleado not in (select id_empleado from planes_de_carrera where id_curso = " + curso.id_curso +") and tipo = 'EMPLEADO'")
-			.spread((empleados) => {
+				.spread((empleados) => {
 				return curso.empleados = empleados;
+			}));
+			promises.push(db.query("select * from clases where id_curso=" + curso.id_curso)
+				.spread((clases) => {
+					return curso.clases = clases;
 			}));
 		});
 
