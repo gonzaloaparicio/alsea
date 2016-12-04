@@ -232,4 +232,9 @@ insert into clases values(14, 'Problemas habituales y como accionar', 4);
 insert into clases values(15, 'Como preparar café', 5);
 insert into clases values(16, 'Exámen cerficador', 5);
 
-	
+-- CERTIFICACIONES
+
+insert into certificaciones values(1, 10, 1);
+insert into certificaciones values(2, 13, 2);
+insert into certificaciones values(3, 27, 3);
+insert into certificaciones values(4, 44, 4);

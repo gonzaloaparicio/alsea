@@ -46,18 +46,34 @@
 				<tr> 
 					<th>#</th> 
 					<th>Descipción</th>
+					<th>Fecha</th>
+					<th>Entrenador</th>
+					<th>Aula</th>
 				</tr> 
 			</thead> 
 			<tbody>
 				{{#each this.clases}}
-					<tr> 
+					<tr data-id-clase={{this.id_clase}}> 
 						<th scope="row">{{this.id_clase}}</th> 
-						<td>{{this.descripcion}}</td> 
+						<td>{{this.descripcion}}</td>
+						<td class="clase-fecha">
+							<input type="date">
+						</td>
+						<td>
+							<select class="entrenadores-select" id="entrenadores-{{this.id_clase}}">
+  								<option class="borrar-option" disabled selected value>seleccione un entrenador</option>
+							</select>
+						</td>
+						<td>
+							<select class="aulas-select" id="aulas-{{this.id_clase}}">
+  								<option class="borrar-option" disabled selected value>seleccione un aula</option>
+							</select>
+						</td>
 					</tr> 
 				{{/each}}
 			</tbody> 
 		</table>
-		<button type="button" class="btn btn-primary">Siguiente</button>
+		<button type="button" class="btn btn-primary submit-curso">Siguiente</button>
 	</div>
 
 {{/each}}
@@ -65,8 +81,12 @@
 
 <script type="text/javascript">
 
+	var empleados_para_curso = [],
+		curso_id;
+
 	$('li.curso').on('click', function(e) {
 		var $this = $(this);
+		curso_id = $this.attr('id');
 		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
 
 		if ($('div.curso-' + $this.attr('id')).hasClass('curso-hide')) {
@@ -105,6 +125,8 @@
 				if (cant_empl_sucursal_elegida > empleados_por_sucursal[sucursal_emp_elegido].length/2) {
 					alert("¡No se puede elegir al siguiente empleado porque excede dejaría menos de 50% del personal en la sucursal!");
 					$(this).prop('checked', false);
+				} else {
+					empleados_para_curso.push($(this).parent().parent().siblings('th').attr('data-value')) 
 				}
 
 			});
@@ -116,6 +138,54 @@
 
 		$('div.curso-' + id_curso).hide();
 		$('div.clase-' + id_curso).show();
+	});
+
+
+	$('input[type=date]').on('change', function(e) {
+		var id_clase = $(this).parent().parent().attr("data-id-clase");
+
+		$.get( "/services/entrenadoresyclases?fecha=" + this.value + '&idClase=' + id_clase +'&cant='+empleados_para_curso.length, function(data) {
+			$.each(data.entrenadores, function(idx, elem) {
+				$('#entrenadores-'+id_clase).append($('<option>', {
+    				value: elem.id_empleado,
+    				text: elem.nombre +' '+ elem.apellido
+				}));
+			})
+
+			$('#entrenadores-'+id_clase + ' .borrar-option').remove();
+
+			$.each(data.aulas, function(idx, elem) {
+				$('#aulas-'+id_clase).append($('<option>', {
+    				value: elem.id_aula,
+    				text: elem.descripcion +' - '+ elem.tipo
+				}));
+			})
+
+			$('#aulas-'+id_clase + ' .borrar-option').remove();
+		});
+	});
+
+	$('.submit-curso').on('click', function(e) {
+		var clases = [];
+		$.each($('tbody tr:visible'), function(idx, elem) {
+			var clase = {};
+			clase.id = $(this).attr('data-id-clase');
+			clase.fecha = $(this).find('.clase-fecha input')[0].value;
+			clase.entrenador = $(this).find('.entrenadores-select')[0].value;
+			clase.aula = $(this).find('.aulas-select')[0].value;
+			clases.push(clase);
+		});
+
+		var body = {clases: clases, empleados: empleados_para_curso, id_curso: curso_id};
+
+		$.ajax({
+		  type: "POST",
+		  url: "/services/altaCurso",
+		  data: body,
+		  dataType: 'json'
+		});
+
+		alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
 	});
 
 </script>

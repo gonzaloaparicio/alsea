@@ -3,6 +3,7 @@ var exphbs  = require('express-handlebars');
 var db   = require('mysql-promise')();
 //var mysql   = require('mysql');
 var Q       = require('q');
+var bodyParser = require('body-parser')
 
 var app = express();
 
@@ -10,6 +11,12 @@ app.engine('handlebars', exphbs({defaultLayout: 'index'}));
 app.set('view engine', 'handlebars');
 
 app.use("/public", express.static(__dirname + '/public'));
+
+
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+  extended: true
+})); 
 
 
 
@@ -20,13 +27,6 @@ db.configure({
 	"database": "sip"
 });
 
-
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : '',
-//   database : 'sip'
-// });
 
 app.get('/', function (req, res) {
     res.render('bienvenida');
@@ -65,6 +65,56 @@ app.get('/cursos', function (req, res) {
 	 	.then(() => res.render('cursos', {cursos: cursos}));
 		
 	});
+
+});
+
+
+// SERVICES
+app.get('/services/entrenadoresyclases', function (req, res) {
+
+	var date = req.query.fecha, // YYYY-MM-DD
+		id_clase = req.query.idClase,
+		cant_alumnos = req.query.cant,
+		result = {},
+		promises = [];
+
+
+	promises.push(db.query("select * from empleados where tipo = 'ENTRENADOR' and id_empleado in (select id_empleado from certificaciones where id_clase ="+id_clase+") and id_empleado not in (select id_entrenador from planes_de_carrera where fecha ="+date+")")
+		.spread((entrenadores) => {
+			return result.entrenadores = entrenadores;
+		}
+	));
+
+	promises.push(db.query("select * from aulas where capacidad >="+cant_alumnos+" and id_aula not in(select id_aula from planes_de_carrera where fecha ="+date+")")
+		.spread((aulas) => {
+			return result.aulas = aulas;
+		}
+	));
+
+	return Q.all(promises)
+	 	.then(() => res.send(result));
+
+});
+
+app.post('/services/altaCurso', function (req, res) {
+
+	var curso_id = req.body.id_curso,
+		promises = [];
+
+	req.body.empleados.forEach(function(empleado, index) {
+		req.body.clases.forEach(function(clase, index) {
+			var query = "insert into planes_de_carrera(id_curso, id_clase, id_empleado, id_entrenador, id_aula, fecha) values("+curso_id+", "+clase.id+", "+empleado+", "+clase.entrenador+", "+clase.aula+", '"+clase.fecha+"')";
+			console.log(query);
+			promises.push(db.query(query)
+				.spread(() => {
+					return;
+				})
+			);
+		});
+	});
+
+	return Q.all(promises)
+	 	.then(() => res.end());
 
 });
 
