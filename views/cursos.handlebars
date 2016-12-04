@@ -16,16 +16,22 @@
 					<th>#</th> 
 					<th>Nombre</th>
 					<th>Apellido</th>
+					<th>Sucursal Nº</th>
 					<th>Seleccionar</th> 
 				</tr> 
 			</thead> 
 			<tbody>
 				{{#each this.empleados}}
 					<tr> 
-						<th scope="row">{{this.id_empleado}}</th> 
+						<th scope="row" data-value="{{this.id_empleado}}">{{this.id_empleado}}</th> 
 						<td>{{this.nombre}}</td> 
 						<td>{{this.apellido}}</td> 
-						<td>cuadrito</td> 
+						<td class="sucursal" data-value="{{this.nroSucursal}}">{{this.nroSucursal}}</td> 
+						<td>
+							<label>
+      							<input type="checkbox">
+    						</label>
+						</td> 
 					</tr> 
 				{{/each}}
 			</tbody> 
@@ -39,6 +45,47 @@
 	$('li.curso').on('click', function(e) {
 		var $this = $(this);
 		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
+
+		if ($('div.curso-' + $this.attr('id')).hasClass('curso-hide')) {
+			$('input[type=checkbox]:visible').unbind('click');
+		} else {
+			var empleados;
+			$('input[type=checkbox]:visible').on('click', function() {
+				empleados = $('input[type=checkbox]:visible');
+
+				var empleados_por_sucursal = {};
+				// empleados por sucursal
+				$.each(empleados, function(idx, elem) {
+					var $emp = $(elem);
+					var nro_sucursal = $emp.parent().parent().siblings('td.sucursal').attr('data-value');
+
+					if (empleados_por_sucursal[nro_sucursal])
+						empleados_por_sucursal[nro_sucursal].push($emp.parent().parent().siblings('th').attr('data-value'));
+					else {
+						var empls = [];
+						empls.push($emp.parent().parent().siblings('th').attr('data-value'));
+						empleados_por_sucursal[nro_sucursal] = empls;
+					}
+				});
+
+				//validar aca que el que esté checkeado junto con todos los demás de la misma sucursal no exedan el 50% de la misma
+				var sucursal_emp_elegido = $(this).parent().parent().siblings('td.sucursal').attr('data-value');
+				var empleados_elegidos = $('input[type=checkbox]:visible:checked');
+				var cant_empl_sucursal_elegida = 0;
+
+				$.each(empleados_elegidos, function(idx, elem) {
+					if ($(this).parent().parent().siblings('td.sucursal').attr('data-value') == sucursal_emp_elegido)
+						cant_empl_sucursal_elegida++;
+				});
+
+
+				if (cant_empl_sucursal_elegida > empleados_por_sucursal[sucursal_emp_elegido].length/2) {
+					alert("¡No se puede elegir al siguiente empleado porque excede dejaría menos de 50% del personal en la sucursal!");
+					$(this).prop('checked', false);
+				}
+
+			});
+		}
 	});
 
 </script>
