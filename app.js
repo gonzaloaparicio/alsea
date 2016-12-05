@@ -71,6 +71,11 @@ app.get('/cursos', function (req, res) {
 });
 
 
+app.get('/reportes', function (req, res) {
+    res.render('reportes');
+});
+
+
 // SERVICES
 app.get('/services/entrenadoresyclases', function (req, res) {
 
@@ -239,6 +244,14 @@ app.post('/services/altaCurso', function (req, res) {
 	return Q.all(promises)
 	 	.then(() => res.end());
 
+});
+
+
+app.get('/services/reportes', function (req, res) {
+
+	var email = req.query.email;
+
+    return res.end();
 });
 
 app.listen(3000);
