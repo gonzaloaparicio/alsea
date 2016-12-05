@@ -3,7 +3,9 @@ var exphbs  = require('express-handlebars');
 var db   = require('mysql-promise')();
 //var mysql   = require('mysql');
 var Q       = require('q');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
+var nodemailer = require('nodemailer');
+var fs = require('fs');
 
 var app = express();
 
@@ -104,7 +106,6 @@ app.post('/services/altaCurso', function (req, res) {
 	req.body.empleados.forEach(function(empleado, index) {
 		req.body.clases.forEach(function(clase, index) {
 			var query = "insert into planes_de_carrera(id_curso, id_clase, id_empleado, id_entrenador, id_aula, fecha) values("+curso_id+", "+clase.id+", "+empleado+", "+clase.entrenador+", "+clase.aula+", '"+clase.fecha+"')";
-			console.log(query);
 			promises.push(db.query(query)
 				.spread(() => {
 					return;
@@ -112,6 +113,66 @@ app.post('/services/altaCurso', function (req, res) {
 			);
 		});
 	});
+
+
+
+	// ENVIO MAILS
+	var transporter = nodemailer.createTransport('smtps://sipalsea%40gmail.com:sipalsea@smtp.gmail.com');
+
+
+	req.body.clases.forEach(function(clase, index) {
+		db.query("select * from empleados where id_empleado ="+clase.entrenador)
+			.spread((entrenador) => {
+				
+				var html;
+
+				fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {  
+				    if (err) throw err;
+				    html = data;
+
+					html = html.replace("[[entrenador]]", entrenador[0].nombre);
+					html = html.replace("[[fecha]]", clase.fecha);
+
+					db.query("select * from aulas where id_aula="+clase.aula)
+						.spread((aula) => {
+							html = html.replace("[[aula]]", aula[0].tipo + ': ' + aula[0].direccion);
+
+							//query al curso y a la clase y a dentro lo de abajo
+							db.query("select * from cursos where id_curso ="+curso_id)
+								.spread((curso) => {
+									html = html.replace("[[curso]]", curso[0].nombre);
+
+
+									db.query("select * from clases where id_clase="+clase.id)
+										.spread((clase) => {
+
+											html = html.replace("[[clase]]", clase[0].descripcion);
+
+											// setup e-mail data with unicode symbols
+											var mailOptions = {
+											    from: '"Alsea S.A - Centro de Capacitaciones" <sip.alsea@gmail.com>', // sender address
+											    to: entrenador[0].email, // list of receivers
+											    subject: 'Novedades En cursos', // Subject line
+											    html: html // html body
+											};
+
+											// send mail with defined transport object
+											transporter.sendMail(mailOptions, function(error, info){
+											    if(error){
+											        return console.log(error);
+											    }
+											    console.log('Message sent: ' + info.response);
+											});
+										});
+								}
+							);
+						});
+				});
+
+			});
+	});
+
+
 
 	return Q.all(promises)
 	 	.then(() => res.end());
