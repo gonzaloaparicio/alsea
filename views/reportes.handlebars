@@ -1,17 +1,51 @@
-<form class="form-inline">
-  <div class="form-group">
-    <label for="exampleInputEmail2">Email</label>
-    <input type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
-  </div>
-  <button id="boton-reportes" type="submit" class="btn btn-default">Enviar Reporte</button>
-</form>
+<table class="table">
+  <caption>Cursos abiertos o cerrados</caption>
+  <thead>
+    <tr> 
+      <th>#</th>
+      <th>Nombre Curso</th>
+      <th>Fecha en la que comienza</th>
+      <th>Seleccionar para obtener reporte</th>
+    </tr> 
+  </thead> 
+  <tbody> 
+    {{#each cursos}}
+      <tr> 
+        <th scope="row">{{this.id_curso}}</th> 
+        <td>{{this.nombre}}</td> 
+        <td>{{this.fecha}}</td>
+        <td>
+          <label>
+                <input value="{{this.id_curso}}" type="checkbox">
+            </label>
+        </td> 
+      </tr> 
+    {{/each}}
+  </tbody> 
+</table>
 
+
+<div class="reportes-padding">
+  <form class="form-inline">
+    <div class="form-group">
+      <label for="exampleInputEmail2">Email</label>
+      <input type="email" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+    </div>
+    <button id="boton-reportes" type="submit" class="btn btn-default">Enviar Reporte</button>
+  </form>
+<div>
 
 <script type="text/javascript">
   
   $('#boton-reportes').on('click', function(e) {
-    $.get( "/services/reportes?email="+$('#exampleInputEmail2')[0].value, function(data) {
 
+    var ids = [];
+
+    $.each($('input:checked'), function(idx, elem) { ids.push($(elem).attr('value')) });
+
+
+
+    $.get( "/services/reportes?email="+$('#exampleInputEmail2')[0].value+'&ids='+ids.join(','), function(data) {
       //alert
       //window.location = '/inicio'
 

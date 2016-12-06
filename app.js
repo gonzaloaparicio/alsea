@@ -72,7 +72,12 @@ app.get('/cursos', function (req, res) {
 
 
 app.get('/reportes', function (req, res) {
-    res.render('reportes');
+
+	db.query("select * from planes_de_carrera pc join cursos c on pc.id_curso = c.id_curso group by pc.id_curso;")
+		.spread((cursos) => {
+			res.render('reportes', {cursos: cursos})
+		});
+
 });
 
 
@@ -250,8 +255,75 @@ app.post('/services/altaCurso', function (req, res) {
 app.get('/services/reportes', function (req, res) {
 
 	var email = req.query.email;
+	var ids = req.query.ids.split(',');
 
-    return res.end();
+	var reportes = [];
+	var promises = [];
+
+	ids.forEach(function(id, index) {
+		
+		promises.push(db.query("select * from cursos where id_curso="+id)
+			.spread((curso) => {
+				return db.query("select pc.id_empleado, e.nombre nombreEmpleado, e.apellido apellidoEmpleado, pc.presente, pc.nota from planes_de_carrera pc join empleados e on pc.id_empleado = e.id_empleado where pc.id_curso ="+id+" group by pc.id_empleado")
+					.spread((empleados) => {
+
+						var suma_presente = 0;
+						var suma_ausente = 0;
+						var suma_aprobado = 0;
+						var suma_desaprobado = 0;
+						empleados.forEach(function(empleado, index) {
+							if (empleado.presente != null && empleado.presente == 'SI')
+								suma_presente+=1;
+							if (empleado.presente != null && empleado.presente == 'NO')
+								suma_ausente+=1;
+
+							if (empleado.nota != null && empleado.nota == 'APROBADO')
+								suma_aprobado+=1;
+							if (empleado.nota != null && empleado.nota == 'DESAPROBADO')
+								suma_desaprobado+=1;
+						});
+
+						var porcentaje_presentes = suma_presente > 0 ? (suma_presente/empleados.length)*100 : 0;
+						var porcentaje_ausentes = suma_ausente > 0 ? (suma_ausente/empleados.length)*100 : 0;
+						var porcentaje_aprobados = suma_aprobado > 0 ? (suma_aprobado/empleados.length)*100 : 0;
+						var porcentaje_desaprobados = suma_desaprobado > 0 ? (suma_desaprobado/empleados.length)*100 : 0;
+
+						reportes.push( {nombre: curso.nombre, 
+										empleados: empleados, 
+										cantidad: empleados.length, 
+										porcentaje_presentes: porcentaje_presentes,
+										porcentaje_ausentes: porcentaje_ausentes,
+										porcentaje_aprobados: porcentaje_aprobados,
+										porcentaje_desaprobados: porcentaje_desaprobados
+										});
+					});
+			}));
+
+	});
+
+	Q.all(promises).then(() => {
+
+		var transporter = nodemailer.createTransport('smtps://sipalsea%40gmail.com:sipalsea@smtp.gmail.com');
+
+		// setup e-mail data with unicode symbols
+		var mailOptions = {
+		    from: '"Alsea S.A - Centro de Capacitaciones" <sip.alsea@gmail.com>', // sender address
+		    to: [email], // list of receivers
+		    subject: 'Reporte de Cursos', // Subject line
+		    html: JSON.stringify(reportes) // html body
+		};
+
+		// send mail with defined transport object
+		transporter.sendMail(mailOptions, function(error, info){
+		    if(error){
+		        return console.log(error);
+		    }
+		    console.log('Message sent: ' + info.response);
+		});
+
+		return res.end();
+	});
+
 });
 
 app.listen(3000);
