@@ -1,0 +1,46 @@
+Clases
+<ul>
+	{{#each clases}}
+		<li>
+			Clase: {{clase}}
+
+			<table class="table">
+			   <caption>Alumnos</caption>
+			   <thead>
+			      <tr>
+			         <th>#</th>
+			         <th>Nombre</th>
+			         <th>Apellido</th>
+			         <th>Asistencia</th>
+			         <th>Nota</th>
+			      </tr>
+			   </thead>
+			   <tbody>
+			   	  {{#each this.alumnos}}
+				      <tr>
+				         <th scope="row"></th>
+				         <td>{{this.nombre}}</td>
+				         <td>{{this.apellido}}</td>
+						 <td>
+							<select class="aulas-select">
+  								<option class="borrar-option" selected value>N/A</option>
+  								<option class="borrar-option" value="PRESENTE">PRESENTE</option>
+  								<option class="borrar-option" value="AUSENTE">AUSENTE</option>
+							</select>
+						 </td>
+						 <td>
+							<select class="aulas-select">
+  								<option class="borrar-option" selected value>N/A</option>
+  								<option class="borrar-option" value="APROBADO">APROBADO</option>
+  								<option class="borrar-option" value="DESAPROBADO">DESAPROBADO</option>
+							</select>
+						 </td>
+				      </tr>
+				   {{/each}}
+			   </tbody>
+			</table>
+
+			<button id="boton-finalizar" class="btn btn-default">Finalizar Clase</button>
+		</li>	
+	{{/each}}
+</ul>

@@ -39,6 +39,46 @@ app.get('/inicio', function (req, res) {
     res.render('alsea');
 });
 
+app.get('/finalizarClase', function (req, res) {
+    res.render('finalizar');
+});
+
+app.get('/finalizarClase/clases', function (req, res) {
+
+	//sacar el email del query string y hacer el select a planes de carrera
+	db.query("select * from empleados where dni="+req.query.dni)
+	.spread((empleado) => {
+		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, e.nombre nombreAlumno, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
+		.spread((planes_de_carrera) => {
+
+			var resultado = {};
+			planes_de_carrera.forEach(function(p, index) {
+				if (resultado[p.nombreClase]) {
+					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota})
+				} else {
+					resultado[p.nombreClase] = { alumnos: [
+						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota}
+					]};
+				}
+			});
+
+			var clases = Object.keys(resultado);
+			var resultado2 = [];
+
+			clases.forEach(function(nombre, index) {
+				resultado2.push({
+					clase: nombre,
+					alumnos: resultado[nombre].alumnos
+				})
+			});
+
+			console.log(JSON.stringify(resultado2));
+
+			res.render('finalizarClases', {clases: resultado2});
+		});
+	});
+});
+
 
 app.get('/cursos', function (req, res) {
 
