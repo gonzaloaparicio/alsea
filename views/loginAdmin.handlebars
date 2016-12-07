@@ -9,13 +9,17 @@
     <button id="login-submit" type="submit" class="btn btn-default">Ingresar</button>
   </div>
 </div>
-
+<div class="button-area">
+<button type="button" class="btn btn-primary goto-inicio" id={{dni}}>Menú principal</button>
+</div>
 
 <script type="text/javascript">
-
+  $('.goto-inicio').on('click', function(e) {
+    window.location = '/inicio?dni='+$(this).attr('id');
+  });
+  
 	$('#login-submit').on('click', function(e) {
 		// redirect con el email, eso renderea una pagina con el listado de clases asignadas en una tabla (seria el select de planes_de_carrera con where id_entrenador)
-		// var url = '/finalizarClase/clases?dni='+$('#exampleInputEmail1')[0].value+'&password='+$('#exampleInputPassword1')[0].value;
     var dni = $('#exampleInputEmail1')[0].value;
     if(dni == "") {
       alert("Por favor, ingrese Dni.");

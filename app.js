@@ -56,7 +56,7 @@ app.get('/modificarCurso', function(req, res) {
 			Q.all(promises)
 			.then(() => {
 				console.log(JSON.stringify(cursosParaModificar));
-				res.render('modificarCurso', {cursos: cursosParaModificar});
+				res.render('modificarCurso', {cursos: cursosParaModificar,dni:req.query.dni});
 			});
 		});
 });
@@ -69,9 +69,9 @@ app.get('/inicio', function (req, res) {
     .spread((empleado) => {
       if(empleado.length > 0) {
         if(empleado[0].tipo == 'ENTRENADOR') {
-          res.render('alsea', {isTrainer: true});
+          res.render('alsea', {isTrainer: true,dni:req.query.dni});
         } else if (empleado[0].tipo == 'RRHH') {
-          res.render('alsea', {isTrainer: false});
+          res.render('alsea', {isTrainer: false,dni:req.query.dni});
         } else {
           res.render('loginFail', {errorLogin: true});
         }
@@ -93,7 +93,7 @@ app.get('/finalizarClase', function (req, res) {
 });
 
 app.get('/finalizarClaseAdmin', function (req, res) {
-    res.render('loginAdmin');
+    res.render('loginAdmin',{dni:req.query.dni});
 });
 
 app.get('/finalizarClase/clases', function (req, res) {
@@ -125,10 +125,10 @@ app.get('/finalizarClase/clases', function (req, res) {
   				})
   			});
 
-  			res.render('finalizarClases', {clases: resultado2});
+  			res.render('finalizarClases', {clases: resultado2,dni:req.query.dni});
   		});
     } else {
-      res.render('finalizarClaseAdminFail');
+      res.render('finalizarClaseAdminFail',{dni:req.query.dni});
     }
 	});
 });
@@ -158,7 +158,7 @@ app.get('/cursos', function (req, res) {
 		});
 
 	 	return Q.all(promises)
-	 	.then(() => res.render('cursos', {cursos: cursos}));
+	 	.then(() => res.render('cursos', {cursos: cursos, dni:req.query.dni}));
 
 	});
 
@@ -169,7 +169,7 @@ app.get('/reportes', function (req, res) {
 
 	db.query("select * from planes_de_carrera pc join cursos c on pc.id_curso = c.id_curso group by pc.id_curso;")
 		.spread((cursos) => {
-			res.render('reportes', {cursos: cursos})
+			res.render('reportes', {cursos: cursos,dni:req.query.dni})
 		});
 
 });

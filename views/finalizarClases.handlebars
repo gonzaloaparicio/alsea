@@ -41,9 +41,12 @@ Clases
 			</table>
 
 			<button id="{{this.clase}}" class="btn btn-default clase-hidden finalizar-clase-item finalizar-clase-btn">Finalizar Clase</button>
-		</li>	
+		</li>
 	{{/each}}
 </ul>
+<div class="button-area">
+<button type="button" class="btn btn-primary goto-inicio" id={{dni}}>Menú principal</button>
+</div>
 
 
 <script type="text/javascript">
@@ -53,6 +56,10 @@ Clases
 		$(this).unbind('click');
 	});
 
+	$('.goto-inicio').on('click', function(e) {
+		window.location = '/inicio?dni='+$(this).attr('id');
+	});
+	
 	//recolecto la data
 	$('.finalizar-clase-btn').on('click', function(e) {
 
@@ -64,21 +71,21 @@ Clases
 			var id_alumno = $(elem).find('th').attr('value');
 			var presente = $(elem).find('.presente-select')[0].value ? $(elem).find('.presente-select')[0].value : 'N/A';
 			var nota = $(elem).find('.nota-select')[0].value ? $(elem).find('.nota-select')[0].value : 'N/A';
-			
+
 			body.push({id_clase: id_clase, id_profesor: id_profesor, id_alumno: id_alumno, presente: presente, nota: nota});
 		});
-		
-	
+
+
 		$.ajax({
 		  type: "POST",
 		  url: "/services/finalizarClase",
 		  data: {body: body},
 		  dataType: 'json'
-		});	
+		});
 
 		alert("Se actualizó correctamente el curso seleccionado!");
 		window.location = window.location.pathname + window.location.search;
 	});
-	
+
 
 </script>

@@ -44,7 +44,7 @@
 		</table>
 		<div class="button-area">
 			<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
-			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+			<button type="button" data-dni={{../dni}} class="btn btn-primary cancelar-curso">Cancelar</button>
 		</div>
 	</div>
 
@@ -83,15 +83,15 @@
 			</tbody>
 		</table>
 		<div class="button-area">
-			<button type="button" class="btn btn-primary submit-curso">Abrir Curso</button>
-			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+			<button type="button" id={{dni}} class="btn btn-primary submit-curso">Abrir Curso</button>
+			<button type="button" data-dni={{../dni}} class="btn btn-primary cancelar-curso">Cancelar</button>
 		</div>
 	</div>
 
 {{/each}}
 </li>
 <div class="button-area">
-<button type="button" class="btn btn-primary goto-inicio">Menú principal</button>
+<button type="button" class="btn btn-primary goto-inicio" id={{dni}}>Menú principal</button>
 </div>
 
 </ul>
@@ -172,13 +172,13 @@
 		}
 	});
 
-	$('.cancelar-curso').on('click', function(e) {
-		$('.goto-inicio').toggleClass('listado-curso-hide');
-		window.location = '/cursos';
+	$('.goto-inicio').on('click', function(e) {
+		window.location = '/inicio?dni='+$(this).attr('id');
 	});
 
-	$('.goto-inicio').on('click', function(e) {
-		window.location = '/inicio';
+	$('.cancelar-curso').on('click', function(e) {
+		$('.goto-inicio').toggleClass('listado-curso-hide');
+		window.location = '/cursos?dni='+$(this).attr('data-dni');
 	});
 
 	$('input[type=date]').on('change', function(e) {
@@ -254,7 +254,7 @@
 
 					alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
 
-					window.location = '/cursos';
+					window.location = '/cursos?dni='+$(this).attr('id');
 				}
 			}
 		}
