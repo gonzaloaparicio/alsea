@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 db.configure({
 	"host": "localhost",
 	"user": "root",
-	"password": "sql1519",
+	"password": "",
 	"database": "sip"
 });
 
@@ -63,44 +63,71 @@ app.get('/modificarCurso', function(req, res) {
 
 
 app.get('/inicio', function (req, res) {
-    res.render('alsea');
+  if (req.query.dni || req.query.password) {
+    //sacar el email del query string y hacer el select a planes de carrera
+    db.query("select * from empleados where dni="+req.query.dni)
+    .spread((empleado) => {
+      if(empleado.length > 0) {
+        if(empleado[0].tipo == 'ENTRENADOR') {
+          res.render('alsea', {isTrainer: true});
+        } else {
+          res.render('alsea', {isTrainer: false});
+        }
+      } else {
+        res.render('loginFail', {errorLogin: true});
+      }
+    });
+  } else {
+    res.render('loginFail', {errorLogin: false});
+  }
+});
+
+app.get('/login', function (req, res) {
+    res.render('login');
 });
 
 app.get('/finalizarClase', function (req, res) {
     res.render('finalizar');
 });
 
-app.get('/finalizarClase/clases', function (req, res) {
+app.get('/finalizarClaseAdmin', function (req, res) {
+    res.render('loginAdmin');
+});
 
+app.get('/finalizarClase/clases', function (req, res) {
 	//sacar el email del query string y hacer el select a planes de carrera
 	db.query("select * from empleados where dni="+req.query.dni)
 	.spread((empleado) => {
-		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, cl.id_clase idClase, e.nombre nombreAlumno, e2.id_empleado idProfesor, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha, pc.id_empleado from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
-		.spread((planes_de_carrera) => {
+    if(empleado.length > 0 && empleado[0].tipo == "ENTRENADOR"){
+  		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, cl.id_clase idClase, e.nombre nombreAlumno, e2.id_empleado idProfesor, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha, pc.id_empleado from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
+  		.spread((planes_de_carrera) => {
 
-			var resultado = {};
-			planes_de_carrera.forEach(function(p, index) {
-				if (resultado[p.nombreClase]) {
-					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor})
-				} else {
-					resultado[p.nombreClase] = { alumnos: [
-						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor}
-					]};
-				}
-			});
+  			var resultado = {};
+  			planes_de_carrera.forEach(function(p, index) {
+  				if (resultado[p.nombreClase]) {
+  					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor})
+  				} else {
+  					resultado[p.nombreClase] = { alumnos: [
+  						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor}
+  					]};
+  				}
+  			});
 
-			var clases = Object.keys(resultado);
-			var resultado2 = [];
+  			var clases = Object.keys(resultado);
+  			var resultado2 = [];
 
-			clases.forEach(function(nombre, index) {
-				resultado2.push({
-					clase: nombre,
-					alumnos: resultado[nombre].alumnos
-				})
-			});
+  			clases.forEach(function(nombre, index) {
+  				resultado2.push({
+  					clase: nombre,
+  					alumnos: resultado[nombre].alumnos
+  				})
+  			});
 
-			res.render('finalizarClases', {clases: resultado2});
-		});
+  			res.render('finalizarClases', {clases: resultado2});
+  		});
+    } else {
+      res.render('finalizarClaseAdminFail');
+    }
 	});
 });
 

@@ -89,3 +89,20 @@ ul {
 .button-area {
 	text-align: center;
 }
+
+.form-login {
+	width: 300px;
+	margin: auto;
+	margin-top: 100px;
+}
+
+.errorLogin {
+	color: red;
+	font-weight: bold;
+	display: none;
+}
+
+.error-show {
+	display: block;
+	text-align: center;
+}

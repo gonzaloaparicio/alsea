@@ -1,0 +1,19 @@
+<div class="form-login">
+  {{#if errorLogin}}
+    <p class="errorLogin error-show">No se encontró el DNI ingresado</p>
+  {{else}}
+    <p class="errorLogin error-show">Por favor, ingrese al sistema con sus datos.</p>
+  {{/if}}
+  <div class="button-area">
+    <button id="goto-login" type="submit" class="btn btn-default">Log In</button>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+	$('#goto-login').on('click', function(e) {
+      window.location = '/login';
+	});
+
+</script>

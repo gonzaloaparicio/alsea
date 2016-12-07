@@ -1,0 +1,30 @@
+<div class="form-login">
+  {{#if errorLogin}}
+    <p class="errorLogin error-show">No se encontró el DNI ingresado.</p>
+  {{else}}
+    <p class="errorLogin">No se encontró el DNI ingresado</p>
+  {{/if}}
+  <div class="form-group"> <label for="exampleInputEmail1">DNI</label> <input type="text" class="form-control" id="exampleInputEmail1"> </div>
+  <div class="form-group"> <label for="exampleInputPassword1">Password</label> <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"> </div>
+  <div class="button-area">
+    <button id="login-submit" type="submit" class="btn btn-default">Ingresar</button>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+	$('#login-submit').on('click', function(e) {
+		// redirect con el email, eso renderea una pagina con el listado de clases asignadas en una tabla (seria el select de planes_de_carrera con where id_entrenador)
+		// var url = '/finalizarClase/clases?dni='+$('#exampleInputEmail1')[0].value+'&password='+$('#exampleInputPassword1')[0].value;
+    var dni = $('#exampleInputEmail1')[0].value;
+    var pass = $('#exampleInputPassword1')[0].value;
+    if(dni == "" || pass == "") {
+      alert("Por favor, ingrese Dni y contraseña.");
+    } else {
+      var url = '/inicio?dni='+dni+'&password='+pass;
+      window.location = url;
+    }
+	});
+
+</script>
