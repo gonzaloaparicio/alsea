@@ -142,9 +142,22 @@
 
 	$('.curso-sig').on('click', function(e) {
 		var id_curso = $(this).attr('data-curso-id');
+		var empleados = $('input[type=checkbox]:visible');
+		var alertMe = true;
+		$.each(empleados, function(idx, elem) {
+			var $emp = $(elem);
 
-		$('div.curso-' + id_curso).hide();
-		$('div.clase-' + id_curso).show();
+			if($emp.is(":checked")){
+				alertMe = false;
+			}
+		});
+
+		if(alertMe){
+			alert("¡No ha seleccionado ningún empleado!");
+		}else{
+			$('div.curso-' + id_curso).hide();
+			$('div.clase-' + id_curso).show();
+		}
 	});
 
 
