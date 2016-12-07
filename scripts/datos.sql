@@ -238,10 +238,10 @@ INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) V
 INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (130,"EMPLEADO","16112395","Martin","Las","tinas@gmail.edu",99);
 INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (131,"EMPLEADO","16112236","Roman","Rede","manede@gmail.edu",100);
 
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (132,"RRHH","35365177","Camila","Iuna","anairro@gmail.edu",0);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (133,"RRHH","35365178","German","Polan","viaanclas@gmail.edu",0);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (134,"RRHH","35365179","Martin","Carva","tinas@gmail.edu",0);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (135,"RRHH","35365180","Silvio","Aguirre","manede@gmail.edu",0);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (132,"RRHH","35365177","Camila","Iuna","sip.alsea@gmail.com",0);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (133,"RRHH","35365178","German","Polan","sip.alsea@gmail.com",0);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (134,"RRHH","35365179","Martin","Carva","sip.alsea@gmail.com",0);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (135,"RRHH","35365180","Silvio","Aguirre","sip.alsea@gmail.com",0);
 
 update empleados set email = 'sip.alsea@gmail.com';
 
