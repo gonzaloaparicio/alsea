@@ -18,7 +18,7 @@ app.use("/public", express.static(__dirname + '/public'));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
-})); 
+}));
 
 
 
@@ -56,51 +56,80 @@ app.get('/modificarCurso', function(req, res) {
 			Q.all(promises)
 			.then(() => {
 				console.log(JSON.stringify(cursosParaModificar));
-				res.render('modificarCurso', {cursos: cursosParaModificar});
+				res.render('modificarCurso', {cursos: cursosParaModificar,dni:req.query.dni});
 			});
 		});
 });
 
 
 app.get('/inicio', function (req, res) {
-    res.render('alsea');
+  if (req.query.dni || req.query.password) {
+    //sacar el email del query string y hacer el select a planes de carrera
+    db.query("select * from empleados where dni="+req.query.dni)
+    .spread((empleado) => {
+      if(empleado.length > 0) {
+        if(empleado[0].tipo == 'ENTRENADOR') {
+          res.render('alsea', {isTrainer: true,dni:req.query.dni});
+        } else if (empleado[0].tipo == 'RRHH') {
+          res.render('alsea', {isTrainer: false,dni:req.query.dni});
+        } else {
+          res.render('loginFail', {errorLogin: true});
+        }
+      } else {
+        res.render('loginFail', {errorLogin: true});
+      }
+    });
+  } else {
+    res.render('loginFail', {errorLogin: false});
+  }
+});
+
+app.get('/login', function (req, res) {
+    res.render('login');
 });
 
 app.get('/finalizarClase', function (req, res) {
     res.render('finalizar');
 });
 
-app.get('/finalizarClase/clases', function (req, res) {
+app.get('/finalizarClaseAdmin', function (req, res) {
+    res.render('loginAdmin',{dni:req.query.dni});
+});
 
+app.get('/finalizarClase/clases', function (req, res) {
 	//sacar el email del query string y hacer el select a planes de carrera
 	db.query("select * from empleados where dni="+req.query.dni)
 	.spread((empleado) => {
-		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, cl.id_clase idClase, e.nombre nombreAlumno, e2.id_empleado idProfesor, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha, pc.id_empleado from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
-		.spread((planes_de_carrera) => {
+    if(empleado.length > 0 && empleado[0].tipo == "ENTRENADOR"){
+  		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, cl.id_clase idClase, e.nombre nombreAlumno, e2.id_empleado idProfesor, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha, pc.id_empleado from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
+  		.spread((planes_de_carrera) => {
 
-			var resultado = {};
-			planes_de_carrera.forEach(function(p, index) {
-				if (resultado[p.nombreClase]) {
-					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor})
-				} else {
-					resultado[p.nombreClase] = { alumnos: [
-						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor}
-					]};
-				}
-			});
+  			var resultado = {};
+  			planes_de_carrera.forEach(function(p, index) {
+  				if (resultado[p.nombreClase]) {
+  					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor})
+  				} else {
+  					resultado[p.nombreClase] = { alumnos: [
+  						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor}
+  					]};
+  				}
+  			});
 
-			var clases = Object.keys(resultado);
-			var resultado2 = [];
+  			var clases = Object.keys(resultado);
+  			var resultado2 = [];
 
-			clases.forEach(function(nombre, index) {
-				resultado2.push({
-					clase: nombre,
-					alumnos: resultado[nombre].alumnos
-				})
-			});
+  			clases.forEach(function(nombre, index) {
+  				resultado2.push({
+  					clase: nombre,
+  					alumnos: resultado[nombre].alumnos
+  				})
+  			});
 
-			res.render('finalizarClases', {clases: resultado2});
-		});
+  			res.render('finalizarClases', {clases: resultado2,dni:req.query.dni});
+  		});
+    } else {
+      res.render('finalizarClaseAdminFail',{dni:req.query.dni});
+    }
 	});
 });
 
@@ -129,8 +158,8 @@ app.get('/cursos', function (req, res) {
 		});
 
 	 	return Q.all(promises)
-	 	.then(() => res.render('cursos', {cursos: cursos}));
-		
+	 	.then(() => res.render('cursos', {cursos: cursos, dni:req.query.dni}));
+
 	});
 
 });
@@ -140,7 +169,7 @@ app.get('/reportes', function (req, res) {
 
 	db.query("select * from planes_de_carrera pc join cursos c on pc.id_curso = c.id_curso group by pc.id_curso;")
 		.spread((cursos) => {
-			res.render('reportes', {cursos: cursos})
+			res.render('reportes', {cursos: cursos,dni:req.query.dni})
 		});
 
 });
@@ -221,10 +250,10 @@ app.post('/services/altaCurso', function (req, res) {
 	req.body.clases.forEach(function(clase, index) {
 		db.query("select * from empleados where id_empleado ="+clase.entrenador)
 			.spread((entrenador) => {
-				
+
 				var html;
 
-				fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {  
+				fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {
 				    if (err) throw err;
 				    html = data;
 
@@ -279,10 +308,10 @@ app.post('/services/altaCurso', function (req, res) {
 		clase.empleados.forEach(function(empleado, index) {
 			db.query("select * from empleados where id_empleado ="+empleado)
 				.spread((entrenador) => {
-					
+
 					var html;
 
-					fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {  
+					fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {
 					    if (err) throw err;
 					    html = data;
 
@@ -348,7 +377,7 @@ app.get('/services/reportes', function (req, res) {
 	var promises = [];
 
 	ids.forEach(function(id, index) {
-		
+
 		promises.push(db.query("select * from cursos where id_curso="+id)
 			.spread((curso) => {
 				return db.query("select pc.id_empleado, e.nombre nombreEmpleado, e.apellido apellidoEmpleado, pc.presente, pc.nota from planes_de_carrera pc join empleados e on pc.id_empleado = e.id_empleado where pc.id_curso ="+id+" group by pc.id_empleado")
@@ -375,8 +404,8 @@ app.get('/services/reportes', function (req, res) {
 						var porcentaje_aprobados = suma_aprobado > 0 ? (suma_aprobado/empleados.length)*100 : 0;
 						var porcentaje_desaprobados = suma_desaprobado > 0 ? (suma_desaprobado/empleados.length)*100 : 0;
 
-						reportes.push( {nombre: curso[0].nombre, 
-										empleados: empleados, 
+						reportes.push( {nombre: curso[0].nombre,
+										empleados: empleados,
 										cantidad: empleados.length, 
 										porcentaje_presentes: porcentaje_presentes,
 										porcentaje_ausentes: porcentaje_ausentes,
@@ -454,7 +483,7 @@ app.post('/services/actualizarCurso', function (req, res) {
 		var transporter = nodemailer.createTransport('smtps://sipalsea%40gmail.com:sipalsea@smtp.gmail.com');
 
 		req.body.clases.forEach(function(e, i) {
-			
+
 			//mandar mail al profesor dado de baja
 			promises.push(db.query("select e.nombre nombreEntrenador, e.apellido apellidoEntrenador, e.email mailEntrenador, c.descripcion nombreClase, pc.fecha fechaClase, a.descripcion aula from empleados e join planes_de_carrera pc  on pc.id_entrenador = e.id_empleado join clases c on c.id_clase = pc.id_clase join aulas a on a.id_aula = pc.id_aula where e.id_empleado="+e.id_entrenador_viejo+" and  pc.id_plan_de_carrera="+id_plan_de_carrera+" and pc.id_clase="+e.id_clase+" group by pc.id_clase").spread((entrenador) => {
 				var ent = entrenador[0];

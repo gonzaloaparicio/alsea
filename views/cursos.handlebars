@@ -44,7 +44,7 @@
 		</table>
 		<div class="button-area">
 			<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
-			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+			<button type="button" data-dni={{../dni}} class="btn btn-primary cancelar-curso">Cancelar</button>
 		</div>
 	</div>
 
@@ -83,13 +83,17 @@
 			</tbody>
 		</table>
 		<div class="button-area">
-			<button type="button" class="btn btn-primary submit-curso">Abrir Curso</button>
-			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+			<button type="button" id={{dni}} class="btn btn-primary submit-curso">Abrir Curso</button>
+			<button type="button" data-dni={{../dni}} class="btn btn-primary cancelar-curso">Cancelar</button>
 		</div>
 	</div>
 
 {{/each}}
 </li>
+<div class="button-area">
+<button type="button" class="btn btn-primary goto-inicio" id={{dni}}>Menú principal</button>
+</div>
+
 </ul>
 
 <script type="text/javascript">
@@ -102,6 +106,7 @@
 		curso_id = $this.attr('id');
 		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
 		$('li.curso').toggleClass('listado-curso-hide');
+		$('.goto-inicio').toggleClass('listado-curso-hide');
 
 		if ($('div.curso-' + $this.attr('id')).hasClass('curso-hide')) {
 			$('input[type=checkbox]:visible').unbind('click');
@@ -167,8 +172,13 @@
 		}
 	});
 
+	$('.goto-inicio').on('click', function(e) {
+		window.location = '/inicio?dni='+$(this).attr('id');
+	});
+
 	$('.cancelar-curso').on('click', function(e) {
-		window.location = '/cursos';
+		$('.goto-inicio').toggleClass('listado-curso-hide');
+		window.location = '/cursos?dni='+$(this).attr('data-dni');
 	});
 
 	$('input[type=date]').on('change', function(e) {
@@ -244,7 +254,7 @@
 
 					alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
 
-					window.location = '/cursos';
+					window.location = '/cursos?dni='+$(this).attr('id');
 				}
 			}
 		}

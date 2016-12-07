@@ -36,9 +36,15 @@
 		</li>
 	{{/each}}
 </ul>
-
+<div class="button-area">
+<button type="button" class="btn btn-primary goto-inicio" id={{dni}}>Menú principal</button>
+</div>
 
 <script type="text/javascript">
+
+	$('.goto-inicio').on('click', function(e) {
+		window.location = '/inicio?dni='+$(this).attr('id');
+	});
 
 	$.each($('.edit-clase'), function(index, elemt) {
 
@@ -52,8 +58,8 @@
 		$.get("/services/entrenadoresyclases?fecha=" + fecha + '&idClase=' + id_clase +'&cant='+cant, function(data) {
 			var entrenador_default = $(elemt).find('#entrenadores-'+id_clase + ' .borrar-option').attr('data-entrenador-id');
 			var aula_default = $(elemt).find('#aulas-'+id_clase + ' .borrar-option').attr('data-aula-id');
-			
-			
+
+
 			$.each(data.entrenadores, function(idx, elem) {
 				$(elemt).find('#entrenadores-'+id_clase + ' .borrar-option').remove();
 				$(elemt).find('#entrenadores-'+id_clase).append($('<option>', {
@@ -83,8 +89,8 @@
 		var clases = [];
 
 		$.each($(this).siblings('table').find('tbody tr'), function(idx, c) {
-			clases.push({id_clase: $(c).attr('data-id-clase'), 
-						id_entrenador: $(c).find('.entrenadores-select')[0].value, 
+			clases.push({id_clase: $(c).attr('data-id-clase'),
+						id_entrenador: $(c).find('.entrenadores-select')[0].value,
 						id_aula: $(c).find('.aulas-select')[0].value,
 						id_entrenador_viejo: $(c).find('.entrenadores-select').attr('data-entrenador-viejo')});
 		});
