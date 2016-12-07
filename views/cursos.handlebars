@@ -187,6 +187,11 @@
 
 	$('.submit-curso').on('click', function(e) {
 		var clases = [];
+		var fechas = [];
+		var missingInfo = false;
+		var datesError = false;
+		var orderError = false;
+		var previousDate;
 		$.each($('tbody tr:visible'), function(idx, elem) {
 			var clase = {};
 			clase.id = $(this).attr('data-id-clase');
@@ -194,21 +199,45 @@
 			clase.entrenador = $(this).find('.entrenadores-select')[0].value;
 			clase.aula = $(this).find('.aulas-select')[0].value;
 			clase.empleados=empleados_para_curso;
+			if(fechas.indexOf(clase.fecha) != -1) {
+				datesError = true;
+			}else{
+				fechas.push(clase.fecha);
+			}
 			clases.push(clase);
+			if(clase.fecha == "" || clase.entrenador == "" || clase.aula == ""){
+				missingInfo = true;
+			}
+			if(clase.fecha < previousDate){
+				orderError = true;
+			}
+			previousDate = clase.fecha;
 		});
 
-		var body = {clases: clases, empleados: empleados_para_curso, id_curso: curso_id};
+		if(missingInfo) {
+			alert("Por favor, complete los campos de todas las clases.");
+		} else {
+			if(datesError){
+				alert("No puede haber dos clases con la misma fecha.");
+			}else{
+				if(orderError) {
+					alert("Las clases deben dictarse en orden. Modifique las fechas, por favor.");
+				}else{
+					var body = {clases: clases, empleados: empleados_para_curso, id_curso: curso_id};
 
-		$.ajax({
-		  type: "POST",
-		  url: "/services/altaCurso",
-		  data: body,
-		  dataType: 'json'
-		});
+					$.ajax({
+						type: "POST",
+						url: "/services/altaCurso",
+						data: body,
+						dataType: 'json'
+					});
 
-		alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
+					alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
 
-		window.location = '/cursos';
+					window.location = '/cursos';
+				}
+			}
+		}
 	});
 
 </script>
