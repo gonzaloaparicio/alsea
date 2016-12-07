@@ -185,7 +185,7 @@ app.get('/services/entrenadoresyclases', function (req, res) {
 		promises = [];
 
 
-	promises.push(db.query("select * from empleados where tipo = 'ENTRENADOR' and id_empleado in (select id_empleado from certificaciones where id_clase ="+id_clase+") and id_empleado not in (select id_entrenador from planes_de_carrera where fecha ="+date+")")
+	promises.push(db.query("select * from empleados where tipo = 'ENTRENADOR' and id_empleado in (select id_empleado from certificaciones where id_clase ="+id_clase+") and id_empleado not in (select id_entrenador from planes_de_carrera where fecha ='"+date+"')")
 		.spread((entrenadores) => {
 			return result.entrenadores = entrenadores;
 		}
