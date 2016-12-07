@@ -101,6 +101,7 @@
 		var $this = $(this);
 		curso_id = $this.attr('id');
 		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
+		$('li.curso').toggleClass('listado-curso-hide');
 
 		if ($('div.curso-' + $this.attr('id')).hasClass('curso-hide')) {
 			$('input[type=checkbox]:visible').unbind('click');
