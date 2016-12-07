@@ -7,17 +7,39 @@
 	right: 360px;
 }
 
+.alsea {
+	text-align: center;
+	margin-top: 50px;
+}
+
 .btn-inicio {
 	position: fixed;
 	top: 384px;
 	left: 817px;
+	margin-left: 20px;
+	margin-right: 20px;
 }
 
 .alsea .btn-inicio {
 	position: inherit;
 }
 
+.curso {
+	border-style: outset;
+	width: 300px;
+	height: 155px;
+	float: left;
+	margin: 5px 50px;
+}
+
+.curso-row {
+}
+
 .curso-hide {
+	display: none;
+}
+
+.listado-curso-hide {
 	display: none;
 }
 
@@ -29,6 +51,41 @@
 	padding-left: 20px;
 }
 
-.clase-hidden {
-	display: none;	
+.cursos-listado {
+}
+
+.cursos-page-item {
+	float: left;
+	width: 100%;
+}
+
+.cursos-page {
+	padding: 0;
+}
+
+ul {
+	list-style-type: none;
+}
+
+.cursos-rows {
+	padding: 0;
+	text-align: center;
+	margin-top: 25px;
+}
+
+.cursos-title {
+	font-weight: bold;
+}
+
+.empleados-title {
+	padding-left: 5px;
+	font-weight: bold;
+}
+
+.title {
+	text-align: center;
+}
+
+.button-area {
+	text-align: center;
 }

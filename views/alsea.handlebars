@@ -1,8 +1,15 @@
 <div class="alsea">
 	<a href="/cursos" class="btn btn-primary btn-lg btn-inicio" role="button">Cursos</a>
-	<a href="/clases" class="btn btn-primary btn-lg btn-inicio" role="button">Clases</a>
-	<a href="/aulas" class="btn btn-primary btn-lg btn-inicio" role="button">Aulas</a>
+	<a class="btn btn-primary btn-lg btn-inicio not-implemented" role="button">Clases</a>
+	<a class="btn btn-primary btn-lg btn-inicio not-implemented" role="button">Aulas</a>
 	<a href="/reportes" class="btn btn-primary btn-lg btn-inicio" role="button">Reportes</a>
 	<a href="/finalizarClase" class="btn btn-primary btn-lg btn-inicio" role="button">Finalizar Clase</a>
 	<a href="/modificarCurso" class="btn btn-primary btn-lg btn-inicio" role="button">Modificar Curso</a>
 </div>
+
+
+<script type="text/javascript">
+	$('.not-implemented').on('click', function(e) {
+		alert("Disculpe, esta funcionalidad será implementada en futuras versiones.");
+	});
+</script>

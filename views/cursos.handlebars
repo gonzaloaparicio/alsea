@@ -1,83 +1,96 @@
-<ul>
+<ul class="cursos-page">
+<li class="cursos-page-item">
+<ul class="cursos-listado">
 	{{#each cursos}}
 		<li id="{{this.id_curso}}" class="curso">
-		Nombre Curso: {{this.nombre}}
-		Descripción: {{this.nombre}}
-		</li>	
+			<ul class="cursos-rows">
+				<li class="curso-row"><span class="cursos-title">Nombre Curso:</span> {{this.nombre}}</li>
+				<li class="curso-row"><span class="cursos-title">Descripción:</span> {{this.descripcion}}</li>
+			</ul>
+		</li>
 	{{/each}}
 </ul>
+</li>
 
-{{#each cursos}}
+<li class="cursos-page-item">
+	{{#each cursos}}
 	<div class="bs-example curso-hide curso-{{this.id_curso}}" data-example-id="striped-table">
-		Empleados disponibles para el curso {{this.nombre}}
+		<span class="empleados-title">Empleados disponibles para el curso: {{this.nombre}}</span>
 		<table class="table table-striped">
-			<thead> 
-				<tr> 
-					<th>#</th> 
+			<thead>
+				<tr>
+					<th>#</th>
 					<th>Nombre</th>
 					<th>Apellido</th>
 					<th>Sucursal Nº</th>
-					<th>Seleccionar</th> 
-				</tr> 
-			</thead> 
+					<th>Seleccionar</th>
+				</tr>
+			</thead>
 			<tbody>
 				{{#each this.empleados}}
-					<tr> 
-						<th scope="row" data-value="{{this.id_empleado}}">{{this.id_empleado}}</th> 
-						<td>{{this.nombre}}</td> 
-						<td>{{this.apellido}}</td> 
-						<td class="sucursal" data-value="{{this.nroSucursal}}">{{this.nroSucursal}}</td> 
+					<tr>
+						<th scope="row" data-value="{{this.id_empleado}}">{{this.id_empleado}}</th>
+						<td>{{this.nombre}}</td>
+						<td>{{this.apellido}}</td>
+						<td class="sucursal" data-value="{{this.nroSucursal}}">{{this.nroSucursal}}</td>
 						<td>
 							<label>
       							<input type="checkbox">
     						</label>
-						</td> 
-					</tr> 
+						</td>
+					</tr>
 				{{/each}}
-			</tbody> 
+			</tbody>
 		</table>
-		<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
+		<div class="button-area">
+			<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
+			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+		</div>
 	</div>
 
 	<div class="bs-example clase-hide clase-{{this.id_curso}}" data-example-id="striped-table">
-		Clases disponibles para el curso {{this.nombre}}
+		<span class="empleados-title">Clases del curso: {{this.nombre}}</span>
 		<table class="table table-striped">
-			<thead> 
-				<tr> 
-					<th>#</th> 
+			<thead>
+				<tr>
+					<th>#</th>
 					<th>Descipción</th>
 					<th>Fecha</th>
 					<th>Entrenador</th>
 					<th>Aula</th>
-				</tr> 
-			</thead> 
+				</tr>
+			</thead>
 			<tbody>
 				{{#each this.clases}}
-					<tr data-id-clase={{this.id_clase}}> 
-						<th scope="row">{{this.id_clase}}</th> 
+					<tr data-id-clase={{this.id_clase}}>
+						<th scope="row">{{this.id_clase}}</th>
 						<td>{{this.descripcion}}</td>
 						<td class="clase-fecha">
 							<input type="date">
 						</td>
 						<td>
 							<select class="entrenadores-select" id="entrenadores-{{this.id_clase}}">
-  								<option class="borrar-option" disabled selected value>seleccione un entrenador</option>
+  								<option class="borrar-option" disabled selected value>Seleccione un Entrenador</option>
 							</select>
 						</td>
 						<td>
 							<select class="aulas-select" id="aulas-{{this.id_clase}}">
-  								<option class="borrar-option" disabled selected value>seleccione un aula</option>
+  								<option class="borrar-option" disabled selected value>Seleccione un Aula</option>
 							</select>
 						</td>
-					</tr> 
+					</tr>
 				{{/each}}
-			</tbody> 
+			</tbody>
 		</table>
-		<button type="button" class="btn btn-primary submit-curso">Siguiente</button>
+		<div class="button-area">
+			<button type="button" class="btn btn-primary submit-curso">Abrir Curso</button>
+			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+		</div>
 	</div>
 
 {{/each}}
-
+</li>
+</ul>
 
 <script type="text/javascript">
 
@@ -88,6 +101,7 @@
 		var $this = $(this);
 		curso_id = $this.attr('id');
 		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
+		$('li.curso').toggleClass('listado-curso-hide');
 
 		if ($('div.curso-' + $this.attr('id')).hasClass('curso-hide')) {
 			$('input[type=checkbox]:visible').unbind('click');
@@ -123,10 +137,10 @@
 
 
 				if (cant_empl_sucursal_elegida > empleados_por_sucursal[sucursal_emp_elegido].length/2) {
-					alert("¡No se puede elegir al siguiente empleado porque excede dejaría menos de 50% del personal en la sucursal!");
+					alert("¡No se puede elegir al siguiente empleado porque dejaría menos del 50% del personal en la sucursal!");
 					$(this).prop('checked', false);
 				} else {
-					empleados_para_curso.push($(this).parent().parent().siblings('th').attr('data-value')) 
+					empleados_para_curso.push($(this).parent().parent().siblings('th').attr('data-value'))
 				}
 
 			});
@@ -135,11 +149,27 @@
 
 	$('.curso-sig').on('click', function(e) {
 		var id_curso = $(this).attr('data-curso-id');
+		var empleados = $('input[type=checkbox]:visible');
+		var alertMe = true;
+		$.each(empleados, function(idx, elem) {
+			var $emp = $(elem);
 
-		$('div.curso-' + id_curso).hide();
-		$('div.clase-' + id_curso).show();
+			if($emp.is(":checked")){
+				alertMe = false;
+			}
+		});
+
+		if(alertMe){
+			alert("¡No ha seleccionado ningún empleado!");
+		}else{
+			$('div.curso-' + id_curso).hide();
+			$('div.clase-' + id_curso).show();
+		}
 	});
 
+	$('.cancelar-curso').on('click', function(e) {
+		window.location = '/cursos';
+	});
 
 	$('input[type=date]').on('change', function(e) {
 		var id_clase = $(this).parent().parent().attr("data-id-clase");
@@ -167,6 +197,11 @@
 
 	$('.submit-curso').on('click', function(e) {
 		var clases = [];
+		var fechas = [];
+		var missingInfo = false;
+		var datesError = false;
+		var orderError = false;
+		var previousDate;
 		$.each($('tbody tr:visible'), function(idx, elem) {
 			var clase = {};
 			clase.id = $(this).attr('data-id-clase');
@@ -174,21 +209,45 @@
 			clase.entrenador = $(this).find('.entrenadores-select')[0].value;
 			clase.aula = $(this).find('.aulas-select')[0].value;
 			clase.empleados=empleados_para_curso;
+			if(fechas.indexOf(clase.fecha) != -1) {
+				datesError = true;
+			}else{
+				fechas.push(clase.fecha);
+			}
 			clases.push(clase);
+			if(clase.fecha == "" || clase.entrenador == "" || clase.aula == ""){
+				missingInfo = true;
+			}
+			if(clase.fecha < previousDate){
+				orderError = true;
+			}
+			previousDate = clase.fecha;
 		});
 
-		var body = {clases: clases, empleados: empleados_para_curso, id_curso: curso_id};
+		if(missingInfo) {
+			alert("Por favor, complete los campos de todas las clases.");
+		} else {
+			if(datesError){
+				alert("No puede haber dos clases con la misma fecha.");
+			}else{
+				if(orderError) {
+					alert("Las clases deben dictarse en orden. Modifique las fechas, por favor.");
+				}else{
+					var body = {clases: clases, empleados: empleados_para_curso, id_curso: curso_id};
 
-		$.ajax({
-		  type: "POST",
-		  url: "/services/altaCurso",
-		  data: body,
-		  dataType: 'json'
-		});
+					$.ajax({
+						type: "POST",
+						url: "/services/altaCurso",
+						data: body,
+						dataType: 'json'
+					});
 
-		alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
+					alert("El curso fue dado de álta con éxito. Se enviaron notificaciones tanto a los entrenadores como a los alumnos!");
 
-		window.location = '/cursos';
+					window.location = '/cursos';
+				}
+			}
+		}
 	});
 
 </script>
