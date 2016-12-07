@@ -42,8 +42,10 @@
 				{{/each}}
 			</tbody>
 		</table>
-		<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
-		<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+		<div class="button-area">
+			<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
+			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+		</div>
 	</div>
 
 	<div class="bs-example clase-hide clase-{{this.id_curso}}" data-example-id="striped-table">
@@ -80,8 +82,10 @@
 				{{/each}}
 			</tbody>
 		</table>
-		<button type="button" class="btn btn-primary submit-curso">Abrir Curso</button>
-		<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+		<div class="button-area">
+			<button type="button" class="btn btn-primary submit-curso">Abrir Curso</button>
+			<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
+		</div>
 	</div>
 
 {{/each}}
