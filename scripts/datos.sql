@@ -104,14 +104,14 @@ INSERT INTO aulas (id_aula,descripcion,direccion,capacidad,tipo) VALUES (100,"lo
 
 
 -- EMPLEADOS
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (1,"EMPLEADO","1641070770199","Evangeline","Warren","Nulla.tincidunt.neque@Integer.org",16);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (2,"EMPLEADO","1692082974299","Katell","Joyner","id.sapien.Cras@magnaPraesent.org",8);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (3,"EMPLEADO","1683080353199","Amery","Duncan","Vivamus.nisi.Mauris@penatibuset.com",84);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (4,"ENTRENADOR","1633121305199","Yvonne","Watts","Nunc.quis.arcu@nibhAliquamornare.edu",31);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (5,"EMPLEADO","1621081230999","Nathaniel","Montoya","nec.imperdiet@pretium.edu",25);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (6,"EMPLEADO","1635112415199","Brett","Avery","Mauris@Ut.ca",72);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (7,"EMPLEADO","1617062545999","Damon","Hernandez","molestie@elitCurabitur.edu",3);
-INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (8,"ENTRENADOR","1675082479599","Uta","Collier","placerat@ipsumdolorsit.co.uk",87);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (1,"EMPLEADO","1641070770199","Evangeline","Warren","sip.alsea@gmail.com",16);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (2,"EMPLEADO","1692082974299","Katell","Joyner","sip.alsea@gmail.com",8);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (3,"EMPLEADO","1683080353199","Amery","Duncan","sip.alsea@gmail.com",84);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (4,"ENTRENADOR","1633121305199","Yvonne","Watts","sip.alsea@gmail.com",31);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (5,"EMPLEADO","1621081230999","Nathaniel","Montoya","sip.alsea@gmail.com",25);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (6,"EMPLEADO","1635112415199","Brett","Avery","sip.alsea@gmail.com",72);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (7,"EMPLEADO","1617062545999","Damon","Hernandez","sip.alsea@gmail.com",3);
+INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (8,"ENTRENADOR","1675082479599","Uta","Collier","sip.alsea@gmail.com",87);
 INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (9,"EMPLEADO","1603050851799","Porter","Olson","sagittis.Duis@tellussem.org",61);
 INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (10,"ENTRENADOR","1604022271499","Jade","Park","justo@variusultrices.co.uk",46);
 INSERT INTO empleados (id_empleado,tipo,dni,nombre,apellido,email,nroSucursal) VALUES (11,"ENTRENADOR","1600082809799","Caesar","Santos","arcu@tellusjustosit.com",84);
@@ -238,3 +238,7 @@ insert into certificaciones values(1, 10, 1);
 insert into certificaciones values(2, 13, 2);
 insert into certificaciones values(3, 27, 3);
 insert into certificaciones values(4, 44, 4);
+insert into certificaciones values(5, 10, 5);
+insert into certificaciones values(6, 13, 6);
+insert into certificaciones values(7, 27, 7);
+insert into certificaciones values(8, 13, 1);

@@ -46,7 +46,7 @@ CREATE TABLE aulas(
 
 
 CREATE TABLE planes_de_carrera(
-    id_plan_de_carrera BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id_plan_de_carrera BIGINT NOT NULL,
     id_curso BIGINT NOT NULL,
     id_clase BIGINT NOT NULL,
     id_empleado BIGINT NOT NULL,

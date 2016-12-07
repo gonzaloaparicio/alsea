@@ -1,0 +1,104 @@
+<ul>
+	{{#each cursos}}
+		<li data-plan-de-carrera-id="{{this.id_plan_de_carrera}}">
+			Curso: {{this.nombreCurso}} - Fecha en la que comienza: {{this.fecha}}
+
+			<table class="table ">
+			   <caption>Clases</caption>
+			   <thead>
+			      <tr>
+			         <th>#</th>
+			         <th>Nombre</th>
+			         <th>Entrenador</th>
+			         <th>Aula</th>
+			      </tr>
+			   </thead>
+			   <tbody>
+			   	  {{#each this.clases}}
+				      <tr class="edit-clase" data-id-clase="{{this.id_clase}}" data-fecha="{{../fecha}}" data-cant="{{../cant}}">
+				         <th scope="row">{{this.id_clase}}</th>
+				         <td>{{this.descripcion}}</td>
+				         <td>
+							<select class="entrenadores-select" id="entrenadores-{{this.id_clase}}" data-entrenador-viejo="{{../idEntrenador}}">
+  								<option class="borrar-option" selected data-entrenador-id={{../idEntrenador}} value={{../idEntrenador}}>{{../nombreEntrenador}} - {{../apellidoEntrenador}}</option>
+							</select>
+				         </td>
+				         <td>
+							<select class="aulas-select" id="aulas-{{this.id_clase}}" data-aula-vieja="{{../id_aula}}">
+  								<option class="borrar-option" selected data-aula-id={{../id_aula}} value={{../id_aula}}>{{../aula}}</option>
+							</select>
+				         </td>
+				      </tr>
+			      {{/each}}
+			   </tbody>
+			</table>
+			<button id="{{this.id_plan_de_carrera}}" class="btn btn-default">Actualizar Curso</button>
+		</li>
+	{{/each}}
+</ul>
+
+
+<script type="text/javascript">
+
+	$.each($('.edit-clase'), function(index, elemt) {
+
+		var fecha = $(elemt).attr('data-fecha');
+		fecha = new Date(fecha);
+		fecha = fecha.toISOString().split('T')[0];
+
+		var id_clase = $(elemt).attr('data-id-clase');
+		var cant = $(elemt).attr('data-cant');
+
+		$.get("/services/entrenadoresyclases?fecha=" + fecha + '&idClase=' + id_clase +'&cant='+cant, function(data) {
+			var entrenador_default = $(elemt).find('#entrenadores-'+id_clase + ' .borrar-option').attr('data-entrenador-id');
+			var aula_default = $(elemt).find('#aulas-'+id_clase + ' .borrar-option').attr('data-aula-id');
+			
+			
+			$.each(data.entrenadores, function(idx, elem) {
+				$(elemt).find('#entrenadores-'+id_clase + ' .borrar-option').remove();
+				$(elemt).find('#entrenadores-'+id_clase).append($('<option>', {
+    				value: elem.id_empleado,
+    				text: elem.nombre +' '+ elem.apellido,
+    				selected: elem.id_empleado == entrenador_default
+				}));
+			})
+
+			$.each(data.aulas, function(idx, elem) {
+				$(elemt).find('#aulas-'+id_clase + ' .borrar-option').remove();
+				$(elemt).find('#aulas-'+id_clase).append($('<option>', {
+    				value: elem.id_aula,
+    				text: elem.descripcion +' - '+ elem.tipo,
+    				selected: elem.id_aula == aula_default
+				}));
+			})
+
+		});
+
+	});
+
+
+	$('.btn-default').on('click', function(e) {
+		var id_plan_de_carrera = $(this).attr('id');
+
+		var clases = [];
+
+		$.each($(this).siblings('table').find('tbody tr'), function(idx, c) {
+			clases.push({id_clase: $(c).attr('data-id-clase'), 
+						id_entrenador: $(c).find('.entrenadores-select')[0].value, 
+						id_aula: $(c).find('.aulas-select')[0].value,
+						id_entrenador_viejo: $(c).find('.entrenadores-select').attr('data-entrenador-viejo')});
+		});
+
+
+		$.ajax({
+		  type: "POST",
+		  url: "/services/actualizarCurso?idPlanDeCarrera="+id_plan_de_carrera,
+		  data: {clases: clases},
+		  dataType: 'json'
+		});
+
+		alert('El curso fue modificado con éxito y todos los involucrados fueron notificados!');
+
+	});
+
+</script>

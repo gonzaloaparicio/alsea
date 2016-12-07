@@ -1,10 +1,10 @@
 Clases
 <ul>
 	{{#each clases}}
-		<li>
-			Clase: {{clase}}
+		<li class="finalizar-clase" data-nombre-clase="{{this.clase}}">
+			Clase: {{this.clase}}
 
-			<table class="table">
+			<table class="table clase-hidden finalizar-clase-item">
 			   <caption>Alumnos</caption>
 			   <thead>
 			      <tr>
@@ -18,18 +18,18 @@ Clases
 			   <tbody>
 			   	  {{#each this.alumnos}}
 				      <tr>
-				         <th scope="row"></th>
+				         <th scope="row" data-clase-id="{{this.idClase}}" data-profesor-id="{{this.idProfesor}}" value="{{this.id}}">{{this.id}}</th>
 				         <td>{{this.nombre}}</td>
 				         <td>{{this.apellido}}</td>
 						 <td>
-							<select class="aulas-select">
+							<select class="presente-select">
   								<option class="borrar-option" selected value>N/A</option>
   								<option class="borrar-option" value="PRESENTE">PRESENTE</option>
   								<option class="borrar-option" value="AUSENTE">AUSENTE</option>
 							</select>
 						 </td>
 						 <td>
-							<select class="aulas-select">
+							<select class="nota-select">
   								<option class="borrar-option" selected value>N/A</option>
   								<option class="borrar-option" value="APROBADO">APROBADO</option>
   								<option class="borrar-option" value="DESAPROBADO">DESAPROBADO</option>
@@ -40,7 +40,45 @@ Clases
 			   </tbody>
 			</table>
 
-			<button id="boton-finalizar" class="btn btn-default">Finalizar Clase</button>
+			<button id="{{this.clase}}" class="btn btn-default clase-hidden finalizar-clase-item finalizar-clase-btn">Finalizar Clase</button>
 		</li>	
 	{{/each}}
 </ul>
+
+
+<script type="text/javascript">
+
+	$('.finalizar-clase').on('click', function(e) {
+		$(this).find('.finalizar-clase-item').toggleClass('clase-hidden');
+		$(this).unbind('click');
+	});
+
+	//recolecto la data
+	$('.finalizar-clase-btn').on('click', function(e) {
+
+		var body = [];
+
+		$.each($(this).siblings('table').find('tbody tr'), function(idx, elem) {
+			var id_clase = $(elem).find('th').attr('data-clase-id');
+			var id_profesor = $(elem).find('th').attr('data-profesor-id');
+			var id_alumno = $(elem).find('th').attr('value');
+			var presente = $(elem).find('.presente-select')[0].value ? $(elem).find('.presente-select')[0].value : 'N/A';
+			var nota = $(elem).find('.nota-select')[0].value ? $(elem).find('.nota-select')[0].value : 'N/A';
+			
+			body.push({id_clase: id_clase, id_profesor: id_profesor, id_alumno: id_alumno, presente: presente, nota: nota});
+		});
+		
+	
+		$.ajax({
+		  type: "POST",
+		  url: "/services/finalizarClase",
+		  data: {body: body},
+		  dataType: 'json'
+		});	
+
+		alert("Se actualizó correctamente el curso seleccionado!");
+		window.location = window.location.pathname + window.location.search;
+	});
+	
+
+</script>

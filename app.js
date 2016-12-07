@@ -35,6 +35,33 @@ app.get('/', function (req, res) {
 });
 
 
+
+
+app.get('/modificarCurso', function(req, res) {
+
+	db.query("select pc.fecha, pc.id_plan_de_carrera, c.nombre nombreCurso, pc.id_curso, a.descripcion aula, pc.id_aula, e.nombre nombreEntrenador, e.apellido apellidoEntrenador, e.id_empleado idEntrenador from planes_de_carrera pc join cursos c on pc.id_curso = c.id_curso join aulas a on pc.id_aula = a.id_aula join empleados e on pc.id_entrenador = e.id_empleado group by id_plan_de_carrera")
+		.spread((cursosParaModificar) => {
+
+			var promises = [];
+
+			cursosParaModificar.forEach(function(cpm, i) {
+				promises.push(db.query("select count(id_clase) canti from planes_de_carrera where id_plan_de_carrera ="+cpm.id_plan_de_carrera+" group by id_clase").spread((cant) => {
+					cursosParaModificar[i].cant = cant[0].canti;
+				}));
+				promises.push(db.query("select * from clases where id_curso="+cpm.id_curso).spread((clases) => {
+					cursosParaModificar[i].clases = clases;
+				}));
+			});
+
+			Q.all(promises)
+			.then(() => {
+				console.log(JSON.stringify(cursosParaModificar));
+				res.render('modificarCurso', {cursos: cursosParaModificar});
+			});
+		});
+});
+
+
 app.get('/inicio', function (req, res) {
     res.render('alsea');
 });
@@ -48,16 +75,16 @@ app.get('/finalizarClase/clases', function (req, res) {
 	//sacar el email del query string y hacer el select a planes de carrera
 	db.query("select * from empleados where dni="+req.query.dni)
 	.spread((empleado) => {
-		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, e.nombre nombreAlumno, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
+		db.query("select c.nombre nombreCurso, cl.descripcion nombreClase, cl.id_clase idClase, e.nombre nombreAlumno, e2.id_empleado idProfesor, e.apellido apellidoAlumno, e2.nombre nombreProfesor,pc.nota,pc.presente,pc.fecha, pc.id_empleado from planes_de_carrera pc  join empleados e  on e.id_empleado = pc.id_empleado join empleados e2 on e2.id_empleado = pc.id_entrenador join clases cl on cl.id_clase = pc.id_clase join cursos c on c.id_curso = pc.id_curso where id_entrenador="+empleado[0].id_empleado)
 		.spread((planes_de_carrera) => {
 
 			var resultado = {};
 			planes_de_carrera.forEach(function(p, index) {
 				if (resultado[p.nombreClase]) {
-					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota})
+					resultado[p.nombreClase]['alumnos'].push({nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor})
 				} else {
 					resultado[p.nombreClase] = { alumnos: [
-						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota}
+						{nombre: p.nombreAlumno, apellido: p.apellidoAlumno, presente: p.presente, nota: p.nota, id: p.id_empleado, idClase: p.idClase, idProfesor: p.idProfesor}
 					]};
 				}
 			});
@@ -71,8 +98,6 @@ app.get('/finalizarClase/clases', function (req, res) {
 					alumnos: resultado[nombre].alumnos
 				})
 			});
-
-			console.log(JSON.stringify(resultado2));
 
 			res.render('finalizarClases', {clases: resultado2});
 		});
@@ -148,14 +173,36 @@ app.get('/services/entrenadoresyclases', function (req, res) {
 
 });
 
+
+app.post('/services/finalizarClase', function(req, res) {
+
+	var body = req.body.body;
+	var promises = [];
+
+	body.forEach(function(e, i) {
+		promises.push(db.query("update planes_de_carrera set nota ='"+e.nota+"', presente='"+e.presente+"' where id_empleado ="+e.id_alumno+" and id_clase ="+e.id_clase+" and id_entrenador="+e.id_profesor)
+			.spread(() => {
+				return;
+			}));
+	});
+
+	Q.all(promises)
+		.then(() => {
+			res.end();
+		});
+
+});
+
 app.post('/services/altaCurso', function (req, res) {
 
 	var curso_id = req.body.id_curso,
-		promises = [];
+		promises = [],
+		planes_de_carrera_id = new Date().getTime();
 
-	req.body.empleados.forEach(function(empleado, index) {
+
+	req.body.empleados.forEach(function(empleado, index_e) {
 		req.body.clases.forEach(function(clase, index) {
-			var query = "insert into planes_de_carrera(id_curso, id_clase, id_empleado, id_entrenador, id_aula, fecha) values("+curso_id+", "+clase.id+", "+empleado+", "+clase.entrenador+", "+clase.aula+", '"+clase.fecha+"')";
+			var query = "insert into planes_de_carrera(id_plan_de_carrera, id_curso, id_clase, id_empleado, id_entrenador, id_aula, fecha) values("+planes_de_carrera_id+", "+curso_id+", "+clase.id+", "+empleado+", "+clase.entrenador+", "+clase.aula+", '"+clase.fecha+"')";
 			promises.push(db.query(query)
 				.spread(() => {
 					return;
@@ -362,6 +409,26 @@ app.get('/services/reportes', function (req, res) {
 		});
 
 		return res.end();
+	});
+
+});
+
+app.post('/services/actualizarCurso', function (req, res) {
+
+	var id_plan_de_carrera = req.query.idPlanDeCarrera,
+		promises = [];
+
+	req.body.clases.forEach(function(e, i) {
+		promises.push(db.query("update planes_de_carrera set id_entrenador="+e.id_entrenador+", id_aula="+e.id_aula+" where id_plan_de_carrera="+id_plan_de_carrera+" and id_clase="+e.id_clase));
+	});
+
+
+	Q.all(promises)
+	.then(() => {
+
+		//mandar mails
+
+		res.end();
 	});
 
 });

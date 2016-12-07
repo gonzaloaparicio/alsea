@@ -28,3 +28,7 @@
 .reportes-padding {
 	padding-left: 20px;
 }
+
+.clase-hidden {
+	display: none;	
+}
