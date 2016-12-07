@@ -130,7 +130,7 @@
 
 
 				if (cant_empl_sucursal_elegida > empleados_por_sucursal[sucursal_emp_elegido].length/2) {
-					alert("¡No se puede elegir al siguiente empleado porque excede dejaría menos de 50% del personal en la sucursal!");
+					alert("¡No se puede elegir al siguiente empleado porque dejaría menos del 50% del personal en la sucursal!");
 					$(this).prop('checked', false);
 				} else {
 					empleados_para_curso.push($(this).parent().parent().siblings('th').attr('data-value'))
