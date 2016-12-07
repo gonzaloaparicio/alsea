@@ -90,6 +90,10 @@
 
 {{/each}}
 </li>
+<div class="button-area">
+<button type="button" class="btn btn-primary goto-inicio">Menú principal</button>
+</div>
+
 </ul>
 
 <script type="text/javascript">
@@ -102,6 +106,7 @@
 		curso_id = $this.attr('id');
 		$('div.curso-' + $this.attr('id')).toggleClass('curso-hide');
 		$('li.curso').toggleClass('listado-curso-hide');
+		$('.goto-inicio').toggleClass('listado-curso-hide');
 
 		if ($('div.curso-' + $this.attr('id')).hasClass('curso-hide')) {
 			$('input[type=checkbox]:visible').unbind('click');
@@ -168,7 +173,12 @@
 	});
 
 	$('.cancelar-curso').on('click', function(e) {
+		$('.goto-inicio').toggleClass('listado-curso-hide');
 		window.location = '/cursos';
+	});
+
+	$('.goto-inicio').on('click', function(e) {
+		window.location = '/inicio';
 	});
 
 	$('input[type=date]').on('change', function(e) {

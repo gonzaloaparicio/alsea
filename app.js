@@ -18,14 +18,14 @@ app.use("/public", express.static(__dirname + '/public'));
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
-})); 
+}));
 
 
 
 db.configure({
 	"host": "localhost",
 	"user": "root",
-	"password": "",
+	"password": "sql1519",
 	"database": "sip"
 });
 
@@ -130,7 +130,7 @@ app.get('/cursos', function (req, res) {
 
 	 	return Q.all(promises)
 	 	.then(() => res.render('cursos', {cursos: cursos}));
-		
+
 	});
 
 });
@@ -221,10 +221,10 @@ app.post('/services/altaCurso', function (req, res) {
 	req.body.clases.forEach(function(clase, index) {
 		db.query("select * from empleados where id_empleado ="+clase.entrenador)
 			.spread((entrenador) => {
-				
+
 				var html;
 
-				fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {  
+				fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {
 				    if (err) throw err;
 				    html = data;
 
@@ -279,10 +279,10 @@ app.post('/services/altaCurso', function (req, res) {
 		clase.empleados.forEach(function(empleado, index) {
 			db.query("select * from empleados where id_empleado ="+empleado)
 				.spread((entrenador) => {
-					
+
 					var html;
 
-					fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {  
+					fs.readFile('./views/mails/entrenador.html', 'utf8', function(err, data) {
 					    if (err) throw err;
 					    html = data;
 
@@ -348,7 +348,7 @@ app.get('/services/reportes', function (req, res) {
 	var promises = [];
 
 	ids.forEach(function(id, index) {
-		
+
 		promises.push(db.query("select * from cursos where id_curso="+id)
 			.spread((curso) => {
 				return db.query("select pc.id_empleado, e.nombre nombreEmpleado, e.apellido apellidoEmpleado, pc.presente, pc.nota from planes_de_carrera pc join empleados e on pc.id_empleado = e.id_empleado where pc.id_curso ="+id+" group by pc.id_empleado")
@@ -375,9 +375,9 @@ app.get('/services/reportes', function (req, res) {
 						var porcentaje_aprobados = suma_aprobado > 0 ? (suma_aprobado/empleados.length)*100 : 0;
 						var porcentaje_desaprobados = suma_desaprobado > 0 ? (suma_desaprobado/empleados.length)*100 : 0;
 
-						reportes.push( {nombre: curso.nombre, 
-										empleados: empleados, 
-										cantidad: empleados.length, 
+						reportes.push( {nombre: curso.nombre,
+										empleados: empleados,
+										cantidad: empleados.length,
 										porcentaje_presentes: porcentaje_presentes,
 										porcentaje_ausentes: porcentaje_ausentes,
 										porcentaje_aprobados: porcentaje_aprobados,
@@ -431,7 +431,7 @@ app.post('/services/actualizarCurso', function (req, res) {
 		var transporter = nodemailer.createTransport('smtps://sipalsea%40gmail.com:sipalsea@smtp.gmail.com');
 
 		req.body.clases.forEach(function(e, i) {
-			
+
 			//mandar mail al profesor dado de baja
 			promises.push(db.query("select e.nombre nombreEntrenador, e.apellido apellidoEntrenador, e.email mailEntrenador, c.descripcion nombreClase, pc.fecha fechaClase, a.descripcion aula from empleados e join planes_de_carrera pc  on pc.id_entrenador = e.id_empleado join clases c on c.id_clase = pc.id_clase join aulas a on a.id_aula = pc.id_aula where e.id_empleado="+e.id_entrenador_viejo+" and  pc.id_plan_de_carrera="+id_plan_de_carrera+" and pc.id_clase="+e.id_clase+" group by pc.id_clase").spread((entrenador) => {
 				var ent = entrenador[0];
