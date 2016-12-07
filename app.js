@@ -70,8 +70,10 @@ app.get('/inicio', function (req, res) {
       if(empleado.length > 0) {
         if(empleado[0].tipo == 'ENTRENADOR') {
           res.render('alsea', {isTrainer: true});
-        } else {
+        } else if (empleado[0].tipo == 'RRHH') {
           res.render('alsea', {isTrainer: false});
+        } else {
+          res.render('loginFail', {errorLogin: true});
         }
       } else {
         res.render('loginFail', {errorLogin: true});
