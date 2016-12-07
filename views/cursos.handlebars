@@ -43,10 +43,11 @@
 			</tbody>
 		</table>
 		<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
+		<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
 	</div>
 
 	<div class="bs-example clase-hide clase-{{this.id_curso}}" data-example-id="striped-table">
-		Clases disponibles para el curso {{this.nombre}}
+		<span class="empleados-title">Clases del curso: {{this.nombre}}</span>
 		<table class="table table-striped">
 			<thead>
 				<tr>
@@ -67,19 +68,20 @@
 						</td>
 						<td>
 							<select class="entrenadores-select" id="entrenadores-{{this.id_clase}}">
-  								<option class="borrar-option" disabled selected value>seleccione un entrenador</option>
+  								<option class="borrar-option" disabled selected value>Seleccione un Entrenador</option>
 							</select>
 						</td>
 						<td>
 							<select class="aulas-select" id="aulas-{{this.id_clase}}">
-  								<option class="borrar-option" disabled selected value>seleccione un aula</option>
+  								<option class="borrar-option" disabled selected value>Seleccione un Aula</option>
 							</select>
 						</td>
 					</tr>
 				{{/each}}
 			</tbody>
 		</table>
-		<button type="button" class="btn btn-primary submit-curso">Siguiente</button>
+		<button type="button" class="btn btn-primary submit-curso">Abrir Curso</button>
+		<button type="button" class="btn btn-primary cancelar-curso">Cancelar</button>
 	</div>
 
 {{/each}}
@@ -147,6 +149,9 @@
 		$('div.clase-' + id_curso).show();
 	});
 
+	$('.cancelar-curso').on('click', function(e) {
+		window.location = '/cursos';
+	});
 
 	$('input[type=date]').on('change', function(e) {
 		var id_clase = $(this).parent().parent().attr("data-id-clase");
