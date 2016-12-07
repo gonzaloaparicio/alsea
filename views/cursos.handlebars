@@ -1,40 +1,46 @@
-<ul>
+<ul class="cursos-page">
+<li class="cursos-page-item">
+<ul class="cursos-listado">
 	{{#each cursos}}
 		<li id="{{this.id_curso}}" class="curso">
-		Nombre Curso: {{this.nombre}}
-		Descripción: {{this.nombre}}
-		</li>	
+			<ul class="cursos-rows">
+				<li class="curso-row"><span class="cursos-title">Nombre Curso:</span> {{this.nombre}}</li>
+				<li class="curso-row"><span class="cursos-title">Descripción:</span> {{this.nombre}}</li>
+			</ul>
+		</li>
 	{{/each}}
 </ul>
+</li>
 
-{{#each cursos}}
+<li class="cursos-page-item">
+	{{#each cursos}}
 	<div class="bs-example curso-hide curso-{{this.id_curso}}" data-example-id="striped-table">
-		Empleados disponibles para el curso {{this.nombre}}
+		<span class="empleados-title">Empleados disponibles para el curso: {{this.nombre}}</span>
 		<table class="table table-striped">
-			<thead> 
-				<tr> 
-					<th>#</th> 
+			<thead>
+				<tr>
+					<th>#</th>
 					<th>Nombre</th>
 					<th>Apellido</th>
 					<th>Sucursal Nº</th>
-					<th>Seleccionar</th> 
-				</tr> 
-			</thead> 
+					<th>Seleccionar</th>
+				</tr>
+			</thead>
 			<tbody>
 				{{#each this.empleados}}
-					<tr> 
-						<th scope="row" data-value="{{this.id_empleado}}">{{this.id_empleado}}</th> 
-						<td>{{this.nombre}}</td> 
-						<td>{{this.apellido}}</td> 
-						<td class="sucursal" data-value="{{this.nroSucursal}}">{{this.nroSucursal}}</td> 
+					<tr>
+						<th scope="row" data-value="{{this.id_empleado}}">{{this.id_empleado}}</th>
+						<td>{{this.nombre}}</td>
+						<td>{{this.apellido}}</td>
+						<td class="sucursal" data-value="{{this.nroSucursal}}">{{this.nroSucursal}}</td>
 						<td>
 							<label>
       							<input type="checkbox">
     						</label>
-						</td> 
-					</tr> 
+						</td>
+					</tr>
 				{{/each}}
-			</tbody> 
+			</tbody>
 		</table>
 		<button type="button" class="btn btn-primary curso-sig" data-curso-id="{{this.id_curso}}">Siguiente</button>
 	</div>
@@ -42,19 +48,19 @@
 	<div class="bs-example clase-hide clase-{{this.id_curso}}" data-example-id="striped-table">
 		Clases disponibles para el curso {{this.nombre}}
 		<table class="table table-striped">
-			<thead> 
-				<tr> 
-					<th>#</th> 
+			<thead>
+				<tr>
+					<th>#</th>
 					<th>Descipción</th>
 					<th>Fecha</th>
 					<th>Entrenador</th>
 					<th>Aula</th>
-				</tr> 
-			</thead> 
+				</tr>
+			</thead>
 			<tbody>
 				{{#each this.clases}}
-					<tr data-id-clase={{this.id_clase}}> 
-						<th scope="row">{{this.id_clase}}</th> 
+					<tr data-id-clase={{this.id_clase}}>
+						<th scope="row">{{this.id_clase}}</th>
 						<td>{{this.descripcion}}</td>
 						<td class="clase-fecha">
 							<input type="date">
@@ -69,15 +75,16 @@
   								<option class="borrar-option" disabled selected value>seleccione un aula</option>
 							</select>
 						</td>
-					</tr> 
+					</tr>
 				{{/each}}
-			</tbody> 
+			</tbody>
 		</table>
 		<button type="button" class="btn btn-primary submit-curso">Siguiente</button>
 	</div>
 
 {{/each}}
-
+</li>
+</ul>
 
 <script type="text/javascript">
 
@@ -126,7 +133,7 @@
 					alert("¡No se puede elegir al siguiente empleado porque excede dejaría menos de 50% del personal en la sucursal!");
 					$(this).prop('checked', false);
 				} else {
-					empleados_para_curso.push($(this).parent().parent().siblings('th').attr('data-value')) 
+					empleados_para_curso.push($(this).parent().parent().siblings('th').attr('data-value'))
 				}
 
 			});
