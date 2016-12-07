@@ -1,9 +1,9 @@
 <ul>
 	{{#each cursos}}
-		<li data-plan-de-carrera-id="{{this.id_plan_de_carrera}}">
+		<li class="item-table-curso" data-plan-de-carrera-id="{{this.id_plan_de_carrera}}">
 			Curso: {{this.nombreCurso}} - Fecha en la que comienza: {{this.fecha}}
-
-			<table class="table ">
+			<a id="show-{{this.id_plan_de_carrera}}" class="mostrar-curso">Ver más</a>
+			<table class="table table-curso" id="table-{{this.id_plan_de_carrera}}">
 			   <caption>Clases</caption>
 			   <thead>
 			      <tr>
@@ -32,7 +32,7 @@
 			      {{/each}}
 			   </tbody>
 			</table>
-			<button id="{{this.id_plan_de_carrera}}" class="btn btn-default">Actualizar Curso</button>
+			<button id="{{this.id_plan_de_carrera}}" class="btn btn-default hide-button btn-{{this.id_plan_de_carrera}}">Actualizar Curso</button>
 		</li>
 	{{/each}}
 </ul>
@@ -44,6 +44,12 @@
 
 	$('.goto-inicio').on('click', function(e) {
 		window.location = '/inicio?dni='+$(this).attr('id');
+	});
+
+	$('.mostrar-curso').on('click', function(e) {
+		var id = $(this).attr('id').split("-")[1];
+		$('#table-'+id).toggleClass('show-table-curso');
+		$('.btn-'+id).toggleClass('hide-button');
 	});
 
 	$.each($('.edit-clase'), function(index, elemt) {

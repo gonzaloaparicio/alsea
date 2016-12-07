@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 db.configure({
 	"host": "localhost",
 	"user": "root",
-	"password": "",
+	"password": "sql1519",
 	"database": "sip"
 });
 
@@ -406,7 +406,7 @@ app.get('/services/reportes', function (req, res) {
 
 						reportes.push( {nombre: curso[0].nombre,
 										empleados: empleados,
-										cantidad: empleados.length, 
+										cantidad: empleados.length,
 										porcentaje_presentes: porcentaje_presentes,
 										porcentaje_ausentes: porcentaje_ausentes,
 										porcentaje_aprobados: porcentaje_aprobados,
