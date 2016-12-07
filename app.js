@@ -426,9 +426,89 @@ app.post('/services/actualizarCurso', function (req, res) {
 	Q.all(promises)
 	.then(() => {
 
-		//mandar mails
+		var promises = [];
 
-		res.end();
+		var transporter = nodemailer.createTransport('smtps://sipalsea%40gmail.com:sipalsea@smtp.gmail.com');
+
+		req.body.clases.forEach(function(e, i) {
+			
+			//mandar mail al profesor dado de baja
+			promises.push(db.query("select e.nombre nombreEntrenador, e.apellido apellidoEntrenador, e.email mailEntrenador, c.descripcion nombreClase, pc.fecha fechaClase, a.descripcion aula from empleados e join planes_de_carrera pc  on pc.id_entrenador = e.id_empleado join clases c on c.id_clase = pc.id_clase join aulas a on a.id_aula = pc.id_aula where e.id_empleado="+e.id_entrenador_viejo+" and  pc.id_plan_de_carrera="+id_plan_de_carrera+" and pc.id_clase="+e.id_clase+" group by pc.id_clase").spread((entrenador) => {
+				var ent = entrenador[0];
+				var body = "Hola, "+ent.nombreEntrenador+" "+ent.apellidoEntrenador+". Fue dado de baja para dictar la clase: "+ ent.nombreClase+ " el dia: "+ent.fechaClase+" en el aula: " + ent.aula;
+
+
+				var mailOptions = {
+				    from: '"Alsea S.A - Centro de Capacitaciones" <sip.alsea@gmail.com>', // sender address
+				    to: ent.mailEntrenador, // list of receivers
+				    subject: 'Baja en cursos', // Subject line
+				    html: body // html body
+				};
+
+				// send mail with defined transport object
+				transporter.sendMail(mailOptions, function(error, info){
+				    if(error){
+				        return console.log(error);
+				    }
+				    console.log('Message sent: ' + info.response);
+				});
+			}));
+
+
+			//mandar mail al profesor dado de alta
+			promises.push(db.query("select e.nombre nombreEntrenador, e.apellido apellidoEntrenador, e.email mailEntrenador, c.descripcion nombreClase, pc.fecha fechaClase, a.descripcion aula from empleados e join planes_de_carrera pc  on pc.id_entrenador = e.id_empleado join clases c on c.id_clase = pc.id_clase join aulas a on a.id_aula = pc.id_aula where e.id_empleado="+e.id_entrenador+" and  pc.id_plan_de_carrera="+id_plan_de_carrera+" and pc.id_clase="+e.id_clase+" group by pc.id_clase").spread((entrenador) => {
+				var ent = entrenador[0];
+				var body = "Hola, "+ent.nombreEntrenador+" "+ent.apellidoEntrenador+". Fue dado de alta para dictar la clase: "+ ent.nombreClase+ " el dia: "+ent.fechaClase+" en el aula: " + ent.aula;
+
+
+				var mailOptions = {
+				    from: '"Alsea S.A - Centro de Capacitaciones" <sip.alsea@gmail.com>', // sender address
+				    to: ent.mailEntrenador, // list of receivers
+				    subject: 'Fue seleccionado para dictar una clase!', // Subject line
+				    html: body // html body
+				};
+
+				// send mail with defined transport object
+				transporter.sendMail(mailOptions, function(error, info){
+				    if(error){
+				        return console.log(error);
+				    }
+				    console.log('Message sent: ' + info.response);
+				});
+			}));
+
+
+			//mails a los alumnos
+			promises.push(db.query("select  e.nombre nombreEntrenador, e.apellido apellidoEntrenador, e2.email mailAlumno, c.descripcion nombreClase, pc.fecha fechaClase, a.descripcion aula,e2.nombre nombreAlumno,e2.apellido apellidoAlumno from empleados e join planes_de_carrera pc   on pc.id_entrenador = e.id_empleado  join empleados e2 on pc.id_empleado = e2.id_empleado join clases c  on c.id_clase = pc.id_clase join aulas a  on a.id_aula = pc.id_aula  where   e.id_empleado="+e.id_entrenador+" and   pc.id_plan_de_carrera="+id_plan_de_carrera+" and  pc.id_clase="+e.id_clase+"").spread((empleados) => {;
+
+
+				empleados.forEach(function(empleado, index) {
+					var body = "Hola, "+empleado.nombreAlumno+" "+empleado.apellidoAlumno+". Se actualizo el curso: "+ empleado.nombreClase+ " el cual se dictará el dia: "+empleado.fechaClase+" en el aula: " + empleado.aula;
+
+
+					var mailOptions = {
+					    from: '"Alsea S.A - Centro de Capacitaciones" <sip.alsea@gmail.com>', // sender address
+					    to: empleado.mailAlumno, // list of receivers
+					    subject: 'Cambio en curso!', // Subject line
+					    html: body // html body
+					};
+
+					// send mail with defined transport object
+					transporter.sendMail(mailOptions, function(error, info){
+					    if(error){
+					        return console.log(error);
+					    }
+					    console.log('Message sent: ' + info.response);
+					});
+				});
+
+			}));
+
+		});
+
+		Q.all(promises)
+		.then(() => res.end());
+
 	});
 
 });
