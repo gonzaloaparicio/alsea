@@ -375,7 +375,7 @@ app.get('/services/reportes', function (req, res) {
 						var porcentaje_aprobados = suma_aprobado > 0 ? (suma_aprobado/empleados.length)*100 : 0;
 						var porcentaje_desaprobados = suma_desaprobado > 0 ? (suma_desaprobado/empleados.length)*100 : 0;
 
-						reportes.push( {nombre: curso.nombre, 
+						reportes.push( {nombre: curso[0].nombre, 
 										empleados: empleados, 
 										cantidad: empleados.length, 
 										porcentaje_presentes: porcentaje_presentes,
@@ -392,12 +392,35 @@ app.get('/services/reportes', function (req, res) {
 
 		var transporter = nodemailer.createTransport('smtps://sipalsea%40gmail.com:sipalsea@smtp.gmail.com');
 
+
+		var super_body = "";
+
+		reportes.forEach(function(curso, index) {
+			super_body = super_body.concat("<h3>Nombre del cuso: "+curso.nombre+"</h3>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("<h3>Cantidad de empleados anotados al curso: "+curso.cantidad+"</h3>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("<h3>Porcentaje de empleados presentes: "+curso.porcentaje_presentes+"</h3>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("<h3>Porcentaje de empleados ausentes: "+curso.porcentaje_ausentes+"</h3>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("<h3>Porcentaje de empleados aprobados: "+curso.porcentaje_aprobados+"</h3>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("<h3>Porcentaje de empleados desaprobados: "+curso.porcentaje_desaprobados+"</h3>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("</br>");
+			super_body = super_body.concat("</br>");
+		});
+
+
+		console.log(super_body);
+
 		// setup e-mail data with unicode symbols
 		var mailOptions = {
 		    from: '"Alsea S.A - Centro de Capacitaciones" <sip.alsea@gmail.com>', // sender address
 		    to: [email], // list of receivers
 		    subject: 'Reporte de Cursos', // Subject line
-		    html: JSON.stringify(reportes) // html body
+		    html: super_body // html body
 		};
 
 		// send mail with defined transport object
