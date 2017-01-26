@@ -388,9 +388,9 @@ app.get('/services/reportes', function (req, res) {
 						var suma_aprobado = 0;
 						var suma_desaprobado = 0;
 						empleados.forEach(function(empleado, index) {
-							if (empleado.presente != null && empleado.presente == 'SI')
+							if (empleado.presente != null && empleado.presente == 'PRESENTE')
 								suma_presente+=1;
-							if (empleado.presente != null && empleado.presente == 'NO')
+							if (empleado.presente != null && empleado.presente == 'AUSENTE')
 								suma_ausente+=1;
 
 							if (empleado.nota != null && empleado.nota == 'APROBADO')
@@ -406,7 +406,7 @@ app.get('/services/reportes', function (req, res) {
 
 						reportes.push( {nombre: curso[0].nombre,
 										empleados: empleados,
-										cantidad: empleados.length, 
+										cantidad: empleados.length,
 										porcentaje_presentes: porcentaje_presentes,
 										porcentaje_ausentes: porcentaje_ausentes,
 										porcentaje_aprobados: porcentaje_aprobados,
