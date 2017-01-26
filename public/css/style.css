@@ -110,3 +110,20 @@ ul {
 .goto-inicio {
   margin-top: 20px;
 }
+
+.table-curso {
+	display: none;
+}
+
+.hide-button {
+	display: none;
+}
+
+.show-table-curso {
+	display: block;
+}
+
+.item-table-curso {
+	margin-top: 10px;
+	margin-bottom: 15px;
+}

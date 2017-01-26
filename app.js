@@ -25,7 +25,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 db.configure({
 	"host": "localhost",
 	"user": "root",
-	"password": "",
+	"password": "sql1519",
 	"database": "sip"
 });
 
